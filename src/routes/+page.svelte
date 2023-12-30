@@ -2,12 +2,15 @@
 	import { onMount } from "svelte";
 
 	let list: HTMLUListElement
+	let items: NodeListOf<HTMLLIElement>
 	let triangle: HTMLElement
+	let currentIndex = 0
 
 	onMount(() => {
-		let items = list.querySelectorAll('li');
+		items = list.querySelectorAll('li');
 
 		if(items) {
+			// If triangle doesnt exists, create one.
 			if(!triangle) {
 				const newEl = document.createElement('span');
 				newEl.classList.add('triangle');
@@ -15,16 +18,46 @@
 				triangle = newEl;
 			}
 
-			items.forEach((item) => {
+			items.forEach((item, index) => {
 				item.addEventListener('mouseenter', () => {
-					if(triangle.parentNode) {
-						item.appendChild(triangle.parentNode.removeChild(triangle));
-					}
+					moveTriangle(index);
 				});
 			})
 		}
 	})
+
+	function on_key_down(event: KeyboardEvent) {
+		if(event.repeat) return;
+
+		switch(event.key) {
+			case 'ArrowUp':
+				currentIndex = currentIndex - 1;
+				if(currentIndex === -1) {
+					currentIndex = list.children.length - 1;
+				}
+				moveTriangle(currentIndex);
+				event.preventDefault();
+				break;
+			case 'ArrowDown':
+				currentIndex = currentIndex + 1;
+				if(currentIndex === list.children.length) {
+					currentIndex = 0;
+				}
+				moveTriangle(currentIndex);
+				event.preventDefault();
+				break;
+		}
+	}
+
+	function moveTriangle(index: number): void {
+		if(triangle.parentNode) {
+			items[index].appendChild(triangle.parentNode.removeChild(triangle));
+			currentIndex = index;
+		}
+	}
 </script>
+
+<svelte:window on:keydown={on_key_down}/>
 
 <div class="container mx-auto flex flex-col justify-center items-center gap-16">
 	<h1 class="font-bold text-5xl w-full text-center tracking-tight text-white">Anttoni Koivu</h1>

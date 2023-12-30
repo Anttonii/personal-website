@@ -46,6 +46,10 @@
 				moveTriangle(currentIndex);
 				event.preventDefault();
 				break;
+			case 'a': // menu selector key
+				redirectTo(currentIndex);
+				event.preventDefault();
+				break;
 		}
 	}
 
@@ -53,6 +57,13 @@
 		if(triangle.parentNode) {
 			items[index].appendChild(triangle.parentNode.removeChild(triangle));
 			currentIndex = index;
+		}
+	}
+
+	function redirectTo(index: number): void {
+		let ref = items[index].querySelector('a');
+		if(ref) {
+			window.location.href = ref.href
 		}
 	}
 </script>
@@ -65,6 +76,7 @@
 	<nav>
 		<ul bind:this={list} class="flex flex-col gap-8 text-xl">
 			<li><a href="/">Home</a></li>
+			<li><a href="/about">About Me</a></li>
 			<li><a href="/projects">Projects</a></li>
 			<li><a href="/contact">Contact</a></li>
 		</ul>

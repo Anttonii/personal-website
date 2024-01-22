@@ -1,1 +1,0 @@
-<p class="text-white">About me</p>

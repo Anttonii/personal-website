@@ -8,6 +8,6 @@ html {
 	height: 100%;
 }
 
-* {
+li > button {
 	font-family: 'Press Start 2P', sans-serif;
 }

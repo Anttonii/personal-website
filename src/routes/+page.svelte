@@ -160,10 +160,19 @@
 		color: white;
 		display: flex;
 		position: relative;
+		padding-left: 200px;
+	}
+
+	li > button {
+		max-width: 300px;
 	}
 
 	li:hover {
 		color: red;
+	}
+
+	.list-wrapper {
+		padding: 0px 0px 0px 100px;
 	}
 
 	nav {
@@ -173,7 +182,6 @@
 
 	.transition-div {
 		width: 600px;
-		max-height: 400px;
 		height: calc(100% + 20px);
 		box-sizing: border-box;
 		border: solid 1px white;

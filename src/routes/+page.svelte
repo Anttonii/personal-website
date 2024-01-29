@@ -39,6 +39,11 @@
 				if(button) {
 					button.addEventListener('click', () => {
 						expanded[currentIndex] = !expanded[currentIndex];
+
+						let expandedDiv = item.nextElementSibling
+						if(expandedDiv) {
+							expandedDiv.scrollIntoView({behavior: 'smooth', inline: 'end'});
+						}
 					})
 				}
 			})
@@ -81,44 +86,95 @@
 				currentIndex = index;
 			}
 		}
+		items[index].scrollIntoView({behavior: 'smooth', inline: 'end'});
 	}
 </script>
 
 <svelte:window on:keydown={on_key_down}/>
 
 <div class="container mx-auto flex flex-col justify-center items-center gap-16">
-	<h1 class="font-bold text-5xl text-center tracking-wider text-white">Anttoni Koivu</h1>
+	<h2 class="font-bold text-5xl text-center tracking-wider text-white">Anttoni Koivu</h2>
 	<nav>
 		<ul bind:this={list} class="flex flex-col gap-4 text-xl justify-center list-container">
-			<li>
+			<li class="menu-item">
 				<button>About Me</button>
 			</li>
-			<div class="wrapper-div">
+			<div class="m-auto">
 				{#if expanded[0]}
 					<div transition:slide={{duration: 1000}} class="transition-div items-start text-white text-lg">
-						<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse velit orci, pulvinar iaculis erat ut, placerat consectetur ligula. Quisque enim nulla, facilisis in sollicitudin et, vehicula mattis est. Praesent pulvinar ipsum eu consectetur consequat. Quisque a nibh dolor. Vivamus tortor libero, maximus vel ex quis, consectetur tempus dui. Cras tristique sapien diam, in blandit libero sagittis a. Curabitur cursus viverra magna non semper.
-	
-							Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum urna lectus, molestie eu sapien nec, fermentum suscipit est. Cras tincidunt a quam vel ultrices. Integer lacinia lacus in ex fermentum auctor. Duis urna felis, viverra id rhoncus eu, interdum nec elit. Vestibulum nulla dolor, pharetra vel nibh quis, ultricies hendrerit diam. Aenean ultricies lacus tortor, at vehicula leo vestibulum id. Aenean sit amet finibus ante. Quisque scelerisque elit ac turpis sodales, vitae convallis magna malesuada. Aliquam varius sem nisl, aliquam tincidunt ipsum scelerisque nec. Quisque luctus venenatis felis sit amet posuere. Proin ac magna sed ante dictum maximus. Curabitur non dolor nibh. </p>
-						</div>
-						{/if}
-					</div>
-					<li>
-						<button>Projects</button>
-					</li>
-					<div class="wrapper-div">
-						{#if expanded[1]}
-						<div transition:slide={{duration: 1000}} class="transition-div items-start text-white text-lg">
-							<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse velit orci, pulvinar iaculis erat ut, placerat consectetur ligula. Quisque enim nulla, facilisis in sollicitudin et, vehicula mattis est. Praesent pulvinar ipsum eu consectetur consequat. Quisque a nibh dolor. Vivamus tortor libero, maximus vel ex quis, consectetur tempus dui. Cras tristique sapien diam, in blandit libero sagittis a. Curabitur cursus viverra magna non semper.
-			
-								Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum urna lectus, molestie eu sapien nec, fermentum suscipit est. Cras tincidunt a quam vel ultrices. Integer lacinia lacus in ex fermentum auctor. Duis urna felis, viverra id rhoncus eu, interdum nec elit. Vestibulum nulla dolor, pharetra vel nibh quis, ultricies hendrerit diam. Aenean ultricies lacus tortor, at vehicula leo vestibulum id. Aenean sit amet finibus ante. Quisque scelerisque elit ac turpis sodales, vitae convallis magna malesuada. Aliquam varius sem nisl, aliquam tincidunt ipsum scelerisque nec. Quisque luctus venenatis felis sit amet posuere. Proin ac magna sed ante dictum maximus. Curabitur non dolor nibh. </p>
+						<p class="content">
+							Hi! I'm a 24 year old software developer located in Finland. I enjoy building software and in general just experimenting in different approaches to solve problems.
+						</p>
 					</div>
 				{/if}
 			</div>
-			<li>
+			<li class="menu-item">
+				<button>Projects</button>
+			</li>
+			<div class="m-auto">
+				{#if expanded[1]}
+				<div transition:slide={{duration: 1000}} class="transition-div items-start text-white text-lg">
+					<div class="content">
+						<h2 class="pb-3">Suikagame <a href="https://github.com/Anttonii/suikagame" class="github-link">[Github]</a></h2>
+						<p>
+							An implementation of a popular Japanese arcade game written in C++ using SDL2 and Box2D.
+						</p>
+					</div>
+					<div class="divider"></div>
+					<div class="content">
+						<h2 class="pb-3">customizable-lootbags <a href="https://github.com/Anttonii/suikagame" class="github-link">[Github]</a></h2>
+						<p>
+							A commissioned Minecraft mod that implements lootbags as mob drops. Opening the lootbags give the player randomized loot based on configuration. Written in Java.
+						</p>
+					</div>
+				</div>
+				{/if}
+			</div>
+			<li class="menu-item">
+				<button>Education</button>
+			</li>
+			<div class="m-auto">
+				{#if expanded[2]}
+				<div transition:slide={{duration: 1000}} class="transition-div items-start text-white text-lg">
+					<div class="content">
+						<h2>Masters of Computer Science</h2>
+						<div class="flex flex-wrap">
+							<div class="w-full basis-2/3">
+								<h4 class="text-xl pt-1 relative"><b>Aalto</b></h4>
+							</div>
+							<div class="w-full basis-1/3">
+								<h4 class="text-xl pt-1 relative"><b>2024 - 2026</b></h4>
+							</div>
+						</div>
+						
+						<div class="divider pt-4"></div>
+
+						<h2 class="pt-4">Bachelors of Computer Science</h2>
+						<div class="flex flex-wrap">
+							<div class="w-full basis-2/3">
+								<h4 class="text-xl pt-1 relative"><b>Aalto</b></h4>
+							</div>
+							<div class="w-full basis-1/3">
+								<h4 class="text-xl pt-1 relative"><b>2021 - 2024</b></h4>
+							</div>
+						</div>
+						<ul class="list-disc pl-8 pt-2 m-auto">
+							<li>
+								Wrote my Bachelors thesis about 3SUM and subset sum problems.
+							</li>
+							<li>
+								Minor in Bioinformation Technology.
+							</li>
+						</ul>
+					</div>
+				</div>
+				{/if}
+			</div>
+			<li class="menu-item">
 				<button>Contact</button>
 			</li>
-			<div class="wrapper-div">
-				{#if expanded[2]}
+			<div class="m-auto">
+				{#if expanded[3]}
 				<div transition:slide={{duration: 1000}} class="transition-div items-start text-white text-lg">
 					<div class="icon-container">
 						<a href="https://www.linkedin.com/in/anttoni-koivu-a55070230/">
@@ -156,19 +212,19 @@
 </div>
 
 <style>
-	li {
+	.menu-item {
 		color: white;
 		display: flex;
 		position: relative;
-		padding-left: 200px;
+		padding-left: 250px;
+	}
+
+	.menu-item:hover {
+		color: red;
 	}
 
 	li > button {
 		max-width: 300px;
-	}
-
-	li:hover {
-		color: red;
 	}
 
 	.list-wrapper {
@@ -177,20 +233,23 @@
 
 	nav {
 		max-height: 90%;
-		width:600px;
+		width: 700px;
 	}
 
 	.transition-div {
-		width: 600px;
-		height: calc(100% + 20px);
+		width: 700px;
 		box-sizing: border-box;
 		border: solid 1px white;
 		border-radius: 4px;
 	}
 
-	.wrapper-div {
-		margin: auto;
-		padding: auto;
+	.divider {
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		margin: 5px auto 5px auto;
+		max-width: 75%;
+		border-bottom: 1px white solid;
 	}
 
 	:global(.triangle) {
@@ -216,24 +275,28 @@
 		z-index: 1;
 		position: relative;
 	}
-
-	div > p {
+	
+	.content {
 		padding: 10px 20px 10px 20px;
 	}
 
 	.icon-container {
-		padding: 10px 20px 10px 20px;
+		padding: 10px 0px 5px 10px;
 		position: relative;
 	}
 
 	.icon-text {
-		margin: 0px 0px 0px 12px;
+		margin: 0px 0px 0px 10px;
 		position: absolute;
 		transform: translateY(10%);
 	}
 
 	a > span:hover {
 		text-decoration: underline;
+	}
+
+	.github-link:hover {
+		color: purple;
 	}
 	
 </style>

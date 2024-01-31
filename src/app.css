@@ -12,6 +12,10 @@ li > button {
 	font-family: 'Press Start 2P', sans-serif;
 }
 
-h2 {
+p,
+h2,
+h3,
+li,
+h4 {
 	font-family: 'Press Start 2P', sans-serif;
 }

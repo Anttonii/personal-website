@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { afterUpdate, onMount } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { slide, fade } from 'svelte/transition';
 
 	import SocialIcons from '@rodneylab/svelte-social-icons';
@@ -12,51 +11,19 @@
 	let outerTriangle: HTMLElement;
 	let currentIndex = 0;
 	let expanded = [false, false, false, false];
-	let loaded = writable(false);
+	let expandedDivs: Array<HTMLDivElement | undefined> = [
+		undefined,
+		undefined,
+		undefined,
+		undefined
+	];
+	let loaded = false;
+	let initialLi: HTMLLIElement;
 
-	onMount(() => {
-		items = list.querySelectorAll('li');
+	onMount(() => {});
 
-		if (items) {
-			const link = items[0].querySelector('button');
-
-			if (!triangle && link) {
-				const newEl = document.createElement('span');
-				newEl.classList.add('triangle');
-				items[0].insertBefore(newEl, link);
-				triangle = newEl;
-			}
-
-			if (!outerTriangle && link) {
-				const newEl = document.createElement('span');
-				newEl.classList.add('outertriangle');
-				items[0].insertBefore(newEl, link);
-				outerTriangle = newEl;
-			}
-
-			items.forEach((item, index) => {
-				item.addEventListener('mouseenter', () => {
-					moveTriangle(index);
-				});
-
-				const button = item.querySelector('button');
-				if (button) {
-					button.addEventListener('click', () => {
-						expanded[currentIndex] = !expanded[currentIndex];
-
-						let expandedDiv = item.nextElementSibling;
-						if (expandedDiv) {
-							expandedDiv.scrollIntoView({ behavior: 'smooth', inline: 'end' });
-						}
-					});
-				}
-			});
-		}
-	});
-
-	// After mounting set loaded to be true.
 	afterUpdate(() => {
-		loaded.set(true);
+		loaded = true;
 	});
 
 	function on_key_down(event: KeyboardEvent) {
@@ -87,6 +54,7 @@
 	}
 
 	function moveTriangle(index: number): void {
+		let items = list.querySelectorAll('li');
 		if (triangle.parentNode && outerTriangle.parentNode) {
 			let link = items[index].querySelector('button');
 			if (link) {
@@ -97,12 +65,21 @@
 		}
 		items[index].scrollIntoView({ behavior: 'smooth', inline: 'end' });
 	}
+
+	function onButtonClick(index: number): void {
+		expanded[index] = !expanded[index];
+
+		let expandedDiv = expandedDivs[index];
+		if (expandedDiv) {
+			expandedDiv.scrollIntoView({ behavior: 'smooth', inline: 'end' });
+		}
+	}
 </script>
 
 <svelte:window on:keydown={on_key_down} />
 
 <div class="container mx-auto flex flex-col justify-center items-center gap-16">
-	{#if !$loaded}
+	{#if !loaded}
 		<div class="flex flex-col justify-center align-middle h-full items-center">
 			<h2 class="text-xl text-white">Loading</h2>
 			<SyncLoader size="60" color="#FFFFFF" unit="px" />
@@ -115,14 +92,20 @@
 			<h2 class="font-bold text-5xl text-center tracking-wider text-white">Anttoni Koivu</h2>
 			<nav>
 				<ul bind:this={list} class="flex flex-col gap-4 justify-center list-container">
-					<li class="menu-item text-xl">
-						<button>About Me</button>
+					<li class="menu-item text-xl" bind:this={initialLi}>
+						<span bind:this={triangle} class="triangle" />
+						<span bind:this={outerTriangle} class="outertriangle" />
+
+						<button on:mouseenter={() => moveTriangle(0)} on:click={() => onButtonClick(0)}
+							>About Me</button
+						>
 					</li>
 					<div class="m-auto">
 						{#if expanded[0]}
 							<div
 								transition:slide={{ duration: 1000 }}
 								class="transition-div items-start text-white"
+								bind:this={expandedDivs[0]}
 							>
 								<p class="content text-sm tracking-tight">
 									Hi! I'm a 24 year old software developer located in Finland. I enjoy building
@@ -136,13 +119,16 @@
 						{/if}
 					</div>
 					<li class="menu-item text-xl">
-						<button>Projects</button>
+						<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(1)}
+							>Projects</button
+						>
 					</li>
 					<div class="m-auto">
 						{#if expanded[1]}
 							<div
 								transition:slide={{ duration: 1000 }}
 								class="transition-div items-start text-white"
+								bind:this={expandedDivs[1]}
 							>
 								<div class="content">
 									<h2 class="pb-3">
@@ -176,13 +162,16 @@
 						{/if}
 					</div>
 					<li class="menu-item text-xl">
-						<button>Education</button>
+						<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(2)}
+							>Education</button
+						>
 					</li>
 					<div class="m-auto">
 						{#if expanded[2]}
 							<div
 								transition:slide={{ duration: 1000 }}
 								class="transition-div items-start text-white"
+								bind:this={expandedDivs[2]}
 							>
 								<div class="content">
 									<h2>Masters of Computer Science</h2>
@@ -215,13 +204,16 @@
 						{/if}
 					</div>
 					<li class="menu-item text-xl">
-						<button>Contact</button>
+						<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(3)}
+							>Contact</button
+						>
 					</li>
 					<div class="m-auto">
 						{#if expanded[3]}
 							<div
 								transition:slide={{ duration: 1000 }}
 								class="transition-div items-start text-white"
+								bind:this={expandedDivs[3]}
 							>
 								<div class="flex flex-row flex-wrap">
 									<div
@@ -288,7 +280,7 @@
 				</ul>
 			</nav>
 		</div>
-		#{/if}
+	{/if}
 </div>
 
 <style>

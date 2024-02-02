@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import { afterUpdate, onMount } from 'svelte';
+	import { writable } from 'svelte/store';
+	import { slide, fade } from 'svelte/transition';
+
 	import SocialIcons from '@rodneylab/svelte-social-icons';
+	import { SyncLoader } from 'svelte-loading-spinners';
 
 	let list: HTMLUListElement;
 	let items: NodeListOf<HTMLLIElement>;
 	let triangle: HTMLElement;
 	let outerTriangle: HTMLElement;
 	let currentIndex = 0;
-	let expanded = [false, false, false];
+	let expanded = [false, false, false, false];
+	let loaded = writable(false);
 
 	onMount(() => {
 		items = list.querySelectorAll('li');
@@ -48,6 +52,11 @@
 				}
 			});
 		}
+	});
+
+	// After mounting set loaded to be true.
+	afterUpdate(() => {
+		loaded.set(true);
 	});
 
 	function on_key_down(event: KeyboardEvent) {
@@ -93,147 +102,193 @@
 <svelte:window on:keydown={on_key_down} />
 
 <div class="container mx-auto flex flex-col justify-center items-center gap-16">
-	<h2 class="font-bold text-5xl text-center tracking-wider text-white">Anttoni Koivu</h2>
-	<nav>
-		<ul bind:this={list} class="flex flex-col gap-4 justify-center list-container">
-			<li class="menu-item text-xl">
-				<button>About Me</button>
-			</li>
-			<div class="m-auto">
-				{#if expanded[0]}
-					<div transition:slide={{ duration: 1000 }} class="transition-div items-start text-white">
-						<p class="content text-sm tracking-tight">
-							Hi! I'm a 24 year old software developer located in Finland. I enjoy building software
-							and solving problems. I'm mostly interested in full-stack development, but excel more
-							in backend than frontend development.
-							<br />
-							<br />
-							I am passionate about weightlifgting and video games.
-						</p>
+	{#if !$loaded}
+		<div class="flex flex-col justify-center align-middle h-full items-center">
+			<h2 class="text-xl text-white">Loading</h2>
+			<SyncLoader size="60" color="#FFFFFF" unit="px" />
+		</div>
+	{:else}
+		<div
+			class="flex flex-col justify-center align-middle h-full gap-16"
+			transition:fade={{ duration: 1000 }}
+		>
+			<h2 class="font-bold text-5xl text-center tracking-wider text-white">Anttoni Koivu</h2>
+			<nav>
+				<ul bind:this={list} class="flex flex-col gap-4 justify-center list-container">
+					<li class="menu-item text-xl">
+						<button>About Me</button>
+					</li>
+					<div class="m-auto">
+						{#if expanded[0]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start text-white"
+							>
+								<p class="content text-sm tracking-tight">
+									Hi! I'm a 24 year old software developer located in Finland. I enjoy building
+									software and solving problems. I'm mostly interested in full-stack development,
+									but excel more in backend than frontend development.
+									<br />
+									<br />
+									I am passionate about weightlifting and video games.
+								</p>
+							</div>
+						{/if}
 					</div>
-				{/if}
-			</div>
-			<li class="menu-item text-xl">
-				<button>Projects</button>
-			</li>
-			<div class="m-auto">
-				{#if expanded[1]}
-					<div transition:slide={{ duration: 1000 }} class="transition-div items-start text-white">
-						<div class="content">
-							<h2 class="pb-3">
-								Suikagame <a href="https://github.com/Anttonii/suikagame" class="github-link"
-									>[Github]</a
-								>
-							</h2>
-							<p class="text-sm tracking-tight">
-								An implementation of a popular Japanese arcade game written in C++ using SDL2 and
-								Box2D.
-							</p>
-						</div>
-						<div class="divider"></div>
-						<div class="content">
-							<h2 class="pb-3">
-								customizable-lootbags <a
-									href="https://github.com/Anttonii/customizable-lootbags"
-									class="github-link">[Github]</a
-								>
-							</h2>
-							<p class="text-sm tracking-tight">
-								A commissioned Minecraft mod that implements lootbags as mob drops. Opening the
-								lootbags give the player randomized loot based on configuration. Written in Java.
-							</p>
-						</div>
-					</div>
-				{/if}
-			</div>
-			<li class="menu-item text-xl">
-				<button>Education</button>
-			</li>
-			<div class="m-auto">
-				{#if expanded[2]}
-					<div transition:slide={{ duration: 1000 }} class="transition-div items-start text-white">
-						<div class="content">
-							<h2>Masters of Computer Science</h2>
-							<div class="flex flex-wrap">
-								<div class="w-full basis-2/3">
-									<h4 class="pt-1 relative"><b>Aalto</b></h4>
+					<li class="menu-item text-xl">
+						<button>Projects</button>
+					</li>
+					<div class="m-auto">
+						{#if expanded[1]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start text-white"
+							>
+								<div class="content">
+									<h2 class="pb-3">
+										Suikagame <a
+											href="https://github.com/Anttonii/suikagame"
+											class="github-link"
+											target="_blank">[Github]</a
+										>
+									</h2>
+									<p class="text-sm tracking-tight">
+										An implementation of a popular Japanese arcade game written in C++ using SDL2
+										and Box2D.
+									</p>
 								</div>
-								<div class="w-full basis-1/3">
-									<h4 class="pt-1 relative"><b>2024 - 2026</b></h4>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										customizable-lootbags <a
+											href="https://github.com/Anttonii/customizable-lootbags"
+											class="github-link"
+											target="_blank">[Github]</a
+										>
+									</h2>
+									<p class="text-sm tracking-tight">
+										A commissioned Minecraft mod that implements lootbags as mob drops. Opening the
+										lootbags give the player randomized loot based on configuration. Written in
+										Java.
+									</p>
 								</div>
 							</div>
+						{/if}
+					</div>
+					<li class="menu-item text-xl">
+						<button>Education</button>
+					</li>
+					<div class="m-auto">
+						{#if expanded[2]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start text-white"
+							>
+								<div class="content">
+									<h2>Masters of Computer Science</h2>
+									<div class="flex flex-wrap">
+										<div class="w-full basis-2/3">
+											<h4 class="pt-1 relative"><b>Aalto</b></h4>
+										</div>
+										<div class="w-full basis-1/3">
+											<h4 class="pt-1 relative"><b>2024 - 2026</b></h4>
+										</div>
+									</div>
 
-							<div class="divider pt-4"></div>
+									<div class="divider pt-4"></div>
 
-							<h2 class="pt-4">Bachelors of Computer Science</h2>
-							<div class="flex flex-wrap">
-								<div class="w-full basis-2/3">
-									<h4 class="pt-1 relative"><b>Aalto</b></h4>
+									<h2 class="pt-4">Bachelors of Computer Science</h2>
+									<div class="flex flex-wrap">
+										<div class="w-full basis-2/3">
+											<h4 class="pt-1 relative"><b>Aalto</b></h4>
+										</div>
+										<div class="w-full basis-1/3">
+											<h4 class="pt-1 relative"><b>2021 - 2024</b></h4>
+										</div>
+									</div>
+									<p class="text-sm pt-2 tracking-tight">
+										- Wrote my Bachelors thesis about 3SUM and subset sum problems. <br />
+										- Minor in Bioinformation Technology.
+									</p>
 								</div>
-								<div class="w-full basis-1/3">
-									<h4 class="pt-1 relative"><b>2021 - 2024</b></h4>
+							</div>
+						{/if}
+					</div>
+					<li class="menu-item text-xl">
+						<button>Contact</button>
+					</li>
+					<div class="m-auto">
+						{#if expanded[3]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start text-white"
+							>
+								<div class="flex flex-row flex-wrap">
+									<div
+										class="flex flex-row align-middle relative w-1/4 justify-center contact-icon"
+									>
+										<SocialIcons
+											id="icon"
+											network="linkedin"
+											width="32"
+											height="32"
+											fgColor="#ffffff"
+										/>
+										<a
+											href="https://www.linkedin.com/in/anttoni-koivu-a55070230/"
+											target="_blank"
+											class="pt-1 pl-2"
+										>
+											<span class="icon-text"> Anttoni Koivu </span>
+										</a>
+									</div>
+									<div
+										class="flex flex-row align-middle relative w-1/4 justify-center contact-icon"
+									>
+										<SocialIcons
+											id="icon"
+											network="github"
+											width="32"
+											height="32"
+											fgColor="#000000"
+											bgColor="#ffffff"
+										/>
+										<a href="https://github.com/Anttonii" target="_blank" class="pt-1 pl-2"
+											>Anttonii
+										</a>
+									</div>
+									<div
+										class="flex relative w-1/4 flex-row align-middle justify-center contact-icon"
+									>
+										<SocialIcons
+											id="icon"
+											network="discord"
+											width="32"
+											height="32"
+											fgColor="#ffffff"
+										/>
+										<span class="pt-1 pl-2">Anttonii</span>
+									</div>
+									<div
+										class="flex flex-row align-middle relative w-1/4 justify-center contact-icon"
+									>
+										<SocialIcons
+											id="icon"
+											network="telegram"
+											width="32"
+											height="32"
+											fgColor="#ffffff"
+										/>
+										<span class="pt-1 pl-2"> Anttoniii </span>
+									</div>
 								</div>
 							</div>
-							<p class="text-sm pt-2 tracking-tight">
-								- Wrote my Bachelors thesis about 3SUM and subset sum problems. <br />
-								- Minor in Bioinformation Technology.
-							</p>
-						</div>
+						{/if}
 					</div>
-				{/if}
-			</div>
-			<li class="menu-item text-xl">
-				<button>Contact</button>
-			</li>
-			<div class="m-auto">
-				{#if expanded[3]}
-					<div transition:slide={{ duration: 1000 }} class="transition-div items-start text-white">
-						<div class="flex flex-row flex-wrap">
-							<div class="flex flex-row align-middle relative w-1/4 justify-center contact-icon">
-								<SocialIcons
-									id="icon"
-									network="linkedin"
-									width="32"
-									height="32"
-									fgColor="#ffffff"
-								/>
-								<a href="https://www.linkedin.com/in/anttoni-koivu-a55070230/" class="pt-1 pl-2">
-									<span class="icon-text"> Anttoni Koivu </span>
-								</a>
-							</div>
-							<div class="flex flex-row align-middle relative w-1/4 justify-center contact-icon">
-								<SocialIcons
-									id="icon"
-									network="github"
-									width="32"
-									height="32"
-									fgColor="#000000"
-									bgColor="#ffffff"
-								/>
-								<a href="https://github.com/Anttonii" class="pt-1 pl-2">
-									<span>Anttonii</span>
-								</a>
-							</div>
-							<div class="flex relative w-1/4 flex-row align-middle justify-center contact-icon">
-								<SocialIcons id="icon" network="discord" width="32" height="32" fgColor="#ffffff" />
-								<span class="pt-1 pl-2">Anttonii</span>
-							</div>
-							<div class="flex flex-row align-middle relative w-1/4 justify-center contact-icon">
-								<SocialIcons
-									id="icon"
-									network="telegram"
-									width="32"
-									height="32"
-									fgColor="#ffffff"
-								/>
-								<span class="pt-1 pl-2"> Anttoniii </span>
-							</div>
-						</div>
-					</div>
-				{/if}
-			</div>
-		</ul>
-	</nav>
+				</ul>
+			</nav>
+		</div>
+		#{/if}
 </div>
 
 <style>
@@ -250,10 +305,6 @@
 
 	li > button {
 		max-width: 300px;
-	}
-
-	.list-wrapper {
-		padding: 0px 0px 0px 100px;
 	}
 
 	nav {
@@ -305,23 +356,25 @@
 		padding: 10px 20px 10px 20px;
 	}
 
-	.icon-container {
-		padding: 10px 0px 5px 10px;
-		position: relative;
-	}
-
 	a > span:hover {
 		text-decoration: underline;
 	}
 
+	.github-link {
+		transition: all 0.1s ease-out;
+	}
+
 	.github-link:hover {
 		color: purple;
+		transition: all 0.1s ease-in;
 	}
 
 	.contact-icon {
 		padding: 0.75rem 0px 0.75rem 0px;
+		transition: all 0.2s ease-out;
 	}
 	.contact-icon:hover {
 		background-color: gray;
+		transition: all 0.2s ease-in;
 	}
 </style>

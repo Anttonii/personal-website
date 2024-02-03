@@ -63,7 +63,6 @@
 				currentIndex = index;
 			}
 		}
-		items[index].scrollIntoView({ behavior: 'smooth', inline: 'end' });
 	}
 
 	function onButtonClick(index: number): void {

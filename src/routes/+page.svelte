@@ -182,6 +182,9 @@
 											<h4 class="pt-1 relative"><b>2024 - 2026</b></h4>
 										</div>
 									</div>
+									<p class="text-sm pt-2 tracking-tight">
+										- Currently enrolled to study Machine Learning, Data Science and Artificial Intelligence as major in Aalto.
+									</p>
 
 									<div class="divider pt-4"></div>
 

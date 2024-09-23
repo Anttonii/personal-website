@@ -20,7 +20,27 @@
 	let loaded = false;
 	let initialLi: HTMLLIElement;
 
-	onMount(() => {});
+	let degree = 0;
+	let changeDirection = 1;
+	let generatedGradient: string;
+
+	let animatedGradient = setInterval(() => {
+		let degreeChange = Math.PI / 120;
+
+		degree += degreeChange;
+		// if (changeDirection == 1) {
+		// 	if (degree >= 2 * Math.PI) {
+		// 		changeDirection = -1;
+		// 	}
+		// } else {
+		// 	degree -= degreeChange;
+		// 	if (degree < 0) {
+		// 		changeDirection = 1;
+		// 	}
+		// }
+
+		generatedGradient = `linear-gradient(${degree}deg, #ef5350,#f48fb1, #7e57c2,#2196f3,#26c6da,#43a047,#eeff41,#f9a825,#ff5722)`;
+	}, 16.67);
 
 	afterUpdate(() => {
 		loaded = true;
@@ -130,11 +150,28 @@
 								bind:this={expandedDivs[1]}
 							>
 								<div class="content">
+									<h2 class="pb-3 link-text">
+										<a href="/games"
+											>Web Games<img
+												src="/images/link-w.png"
+												class="inline-flex align-baseline ml-2"
+												width="16"
+												alt="link"
+											/></a
+										>
+									</h2>
 									<h2 class="pb-3">
-										Suikagame <a
+										Suikagame
+										<a
 											href="https://github.com/Anttonii/suikagame"
-											class="github-link"
-											target="_blank">[Github]</a
+											class="link-text"
+											target="_blank"
+											>[Github]<img
+												src="/images/link-w.png"
+												class="inline-flex align-baseline"
+												width="16"
+												alt="link"
+											/></a
 										>
 									</h2>
 									<p class="text-sm tracking-tight">
@@ -147,8 +184,14 @@
 									<h2 class="pb-3">
 										customizable-lootbags <a
 											href="https://github.com/Anttonii/customizable-lootbags"
-											class="github-link"
-											target="_blank">[Github]</a
+											class="link-text"
+											target="_blank"
+											>[Github]<img
+												src="/images/link-w.png"
+												class="inline-flex align-baseline"
+												width="16"
+												alt="link"
+											/></a
 										>
 									</h2>
 									<p class="text-sm tracking-tight">
@@ -183,7 +226,8 @@
 										</div>
 									</div>
 									<p class="text-sm pt-2 tracking-tight">
-										- Currently enrolled to study Machine Learning, Data Science and Artificial Intelligence as major in Aalto.
+										- Currently enrolled to study Machine Learning, Data Science and Artificial
+										Intelligence as major in Aalto. <br />
 									</p>
 
 									<div class="divider pt-4"></div>
@@ -358,11 +402,6 @@
 		transition: all 0.1s ease-out;
 	}
 
-	.github-link:hover {
-		color: purple;
-		transition: all 0.1s ease-in;
-	}
-
 	.contact-icon {
 		padding: 0.75rem 0px 0.75rem 0px;
 		transition: all 0.2s ease-out;
@@ -370,5 +409,63 @@
 	.contact-icon:hover {
 		background-color: gray;
 		transition: all 0.2s ease-in;
+	}
+
+	.link-text:hover {
+		background: linear-gradient(
+			to right,
+			#ef5350,
+			#f48fb1,
+			#7e57c2,
+			#2196f3,
+			#26c6da,
+			#43a047,
+			#eeff41,
+			#f9a825,
+			#ff5722
+		);
+		background-clip: calc();
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 800% 800%;
+
+		-webkit-animation: AnimationName 10s ease infinite;
+		-moz-animation: AnimationName 10s ease infinite;
+		animation: AnimationName 10s ease infinite;
+		transition: all 0.1s ease-in;
+	}
+
+	@-webkit-keyframes AnimationName {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+	@-moz-keyframes AnimationName {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+	@keyframes AnimationName {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
 	}
 </style>

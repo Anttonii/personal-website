@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterUpdate, onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 
 	import SocialIcons from '@rodneylab/svelte-social-icons';
@@ -19,28 +19,6 @@
 	];
 	let loaded = false;
 	let initialLi: HTMLLIElement;
-
-	let degree = 0;
-	let changeDirection = 1;
-	let generatedGradient: string;
-
-	let animatedGradient = setInterval(() => {
-		let degreeChange = Math.PI / 120;
-
-		degree += degreeChange;
-		// if (changeDirection == 1) {
-		// 	if (degree >= 2 * Math.PI) {
-		// 		changeDirection = -1;
-		// 	}
-		// } else {
-		// 	degree -= degreeChange;
-		// 	if (degree < 0) {
-		// 		changeDirection = 1;
-		// 	}
-		// }
-
-		generatedGradient = `linear-gradient(${degree}deg, #ef5350,#f48fb1, #7e57c2,#2196f3,#26c6da,#43a047,#eeff41,#f9a825,#ff5722)`;
-	}, 16.67);
 
 	afterUpdate(() => {
 		loaded = true;
@@ -127,7 +105,7 @@
 								bind:this={expandedDivs[0]}
 							>
 								<p class="content text-sm tracking-tight">
-									Hi! I'm a 24 year old software developer located in Finland. I enjoy building
+									Hi! I'm a 25 year old software developer located in Finland. I enjoy building
 									software and solving problems. I'm mostly interested in full-stack development,
 									but excel more in backend than frontend development.
 									<br />
@@ -150,8 +128,8 @@
 								bind:this={expandedDivs[1]}
 							>
 								<div class="content">
-									<h2 class="pb-3 link-text">
-										<a href="/games"
+									<h2 class="pb-3">
+										<a href="/games" class="link-text"
 											>Web Games<img
 												src="/images/link-w.png"
 												class="inline-flex align-baseline ml-2"
@@ -160,6 +138,12 @@
 											/></a
 										>
 									</h2>
+									<p class="text-sm tracking-tight">
+										Small web browser games implemented with three.js and svelte.
+									</p>
+								</div>
+								<div class="divider" />
+								<div class="content">
 									<h2 class="pb-3">
 										Suikagame
 										<a
@@ -179,7 +163,7 @@
 										and Box2D.
 									</p>
 								</div>
-								<div class="divider"></div>
+								<div class="divider" />
 								<div class="content">
 									<h2 class="pb-3">
 										customizable-lootbags <a
@@ -429,13 +413,13 @@
 		-webkit-text-fill-color: transparent;
 		background-size: 800% 800%;
 
-		-webkit-animation: AnimationName 10s ease infinite;
-		-moz-animation: AnimationName 10s ease infinite;
-		animation: AnimationName 10s ease infinite;
+		-webkit-animation: TextGradientAnimation 10s ease infinite;
+		-moz-animation: TextGradientAnimation 10s ease infinite;
+		animation: TextGradientAnimation 10s ease infinite;
 		transition: all 0.1s ease-in;
 	}
 
-	@-webkit-keyframes AnimationName {
+	@-webkit-keyframes TextGradientAnimation {
 		0% {
 			background-position: 0% 50%;
 		}
@@ -446,7 +430,8 @@
 			background-position: 0% 50%;
 		}
 	}
-	@-moz-keyframes AnimationName {
+
+	@-moz-keyframes TextGradientAnimation {
 		0% {
 			background-position: 0% 50%;
 		}
@@ -457,7 +442,8 @@
 			background-position: 0% 50%;
 		}
 	}
-	@keyframes AnimationName {
+
+	@keyframes TextGradientAnimation {
 		0% {
 			background-position: 0% 50%;
 		}

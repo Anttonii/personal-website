@@ -145,6 +145,23 @@
 								<div class="divider" />
 								<div class="content">
 									<h2 class="pb-3">
+										<a href="/neural" class="link-text"
+											>Neural Network<img
+												src="/images/link-w.png"
+												class="inline-flex align-baseline ml-2"
+												width="16"
+												alt="link"
+											/></a
+										>
+									</h2>
+									<p class="text-sm tracking-tight">
+										A neural network built on the backend that guesses which number is drawn onto
+										the grid.
+									</p>
+								</div>
+								<div class="divider" />
+								<div class="content">
+									<h2 class="pb-3">
 										Suikagame
 										<a
 											href="https://github.com/Anttonii/suikagame"
@@ -380,10 +397,6 @@
 
 	a > span:hover {
 		text-decoration: underline;
-	}
-
-	.github-link {
-		transition: all 0.1s ease-out;
 	}
 
 	.contact-icon {

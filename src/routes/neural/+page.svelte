@@ -113,7 +113,7 @@
 
 	const postGrid = async () => {
 		// Post the request to backend
-		const res = await fetch('http://localhost:5000/neural', {
+		const res = await fetch('http://46.101.113.170:3000/neural', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({

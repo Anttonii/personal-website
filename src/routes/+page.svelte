@@ -129,22 +129,6 @@
 							>
 								<div class="content">
 									<h2 class="pb-3">
-										<a href="/games" class="link-text"
-											>Web Games<img
-												src="/images/link-w.png"
-												class="inline-flex align-baseline ml-2"
-												width="16"
-												alt="link"
-											/></a
-										>
-									</h2>
-									<p class="text-sm tracking-tight">
-										Small web browser games implemented with three.js and svelte.
-									</p>
-								</div>
-								<div class="divider" />
-								<div class="content">
-									<h2 class="pb-3">
 										<a href="/neural" class="link-text"
 											>Neural Network<img
 												src="/images/link-w.png"
@@ -162,14 +146,34 @@
 								<div class="divider" />
 								<div class="content">
 									<h2 class="pb-3">
-										Suikagame
+										<a
+											href="https://github.com/Anttonii/barbell-tracking"
+											class="link-text"
+											target="_blank"
+											>Barbell Tracking<img
+												src="/images/link-w.png"
+												class="inline-flex align-baseline ml-2"
+												width="16"
+												alt="link"
+											/></a
+										>
+									</h2>
+									<p class="text-sm tracking-tight">
+										Tracks movement of barbell from a video file and produces plots of data such as
+										bar speed and deviation from y-axis. Designed to track the movement pattern in
+										movements like squat, bench press and deadlift. Currently work-in-progress.
+									</p>
+								</div>
+								<div class="divider" />
+								<div class="content">
+									<h2 class="pb-3">
 										<a
 											href="https://github.com/Anttonii/suikagame"
 											class="link-text"
 											target="_blank"
-											>[Github]<img
+											>Suikagame<img
 												src="/images/link-w.png"
-												class="inline-flex align-baseline"
+												class="inline-flex align-baseline ml-2"
 												width="16"
 												alt="link"
 											/></a
@@ -183,22 +187,17 @@
 								<div class="divider" />
 								<div class="content">
 									<h2 class="pb-3">
-										customizable-lootbags <a
-											href="https://github.com/Anttonii/customizable-lootbags"
-											class="link-text"
-											target="_blank"
-											>[Github]<img
+										<a href="/games" class="link-text"
+											>Web Games<img
 												src="/images/link-w.png"
-												class="inline-flex align-baseline"
+												class="inline-flex align-baseline ml-2"
 												width="16"
 												alt="link"
 											/></a
 										>
 									</h2>
 									<p class="text-sm tracking-tight">
-										A commissioned Minecraft mod that implements lootbags as mob drops. Opening the
-										lootbags give the player randomized loot based on configuration. Written in
-										Java.
+										Small web browser games implemented with three.js and svelte.
 									</p>
 								</div>
 							</div>

@@ -28,12 +28,11 @@
 
 	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
-		console.log(canvasContext);
 	});
 
 	const getPosition = (event: MouseEvent) => {
-		let mouseX = event.pageX - canvas.getBoundingClientRect().x;
-		let mouseY = event.pageY - canvas.getBoundingClientRect().y;
+		let mouseX = event.clientX - canvas.getBoundingClientRect().x;
+		let mouseY = event.clientY - canvas.getBoundingClientRect().y;
 		return [mouseX, mouseY];
 	};
 
@@ -47,13 +46,13 @@
 		if (position[0] > 0) {
 			numbers.push([position[0] - 1, position[1]]);
 		}
-		if (position[0] < gridSize) {
+		if (position[0] < gridSize - 1) {
 			numbers.push([position[0] + 1, position[1]]);
 		}
 		if (position[1] > 0) {
 			numbers.push([position[0], position[1] - 1]);
 		}
-		if (position[1] < gridSize) {
+		if (position[1] < gridSize - 1) {
 			numbers.push([position[0], position[1] + 1]);
 		}
 		return numbers;

@@ -43,19 +43,18 @@
 
 	const resize = () => {
 		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-		let viewportHeight = Math.max(
-			document.documentElement.clientHeight || 0,
-			window.innerHeight || 0
-		);
 
-		if (viewportWidth < gridSize * 16 || viewportHeight < gridSize * 16) {
+		if (viewportWidth <= 460) {
 			boxSize = 12;
-		} else {
+		} else if (viewportWidth > 460 && boxSize == 12) {
 			boxSize = 16;
+		} else {
+			return;
 		}
 
 		canvasContext.canvas.width = gridSize * boxSize;
 		canvasContext.canvas.height = gridSize * boxSize;
+		clearGrid();
 	};
 
 	const getPosition = (event: UIEvent) => {
@@ -158,7 +157,7 @@
 
 	const postGrid = async () => {
 		// Post the request to backend
-		const res = await fetch('http://localhost:5000/api/neural', {
+		const res = await fetch('/api/neural', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({

@@ -3,8 +3,8 @@
 	import { fade, slide } from 'svelte/transition';
 
 	let expanderIcon: HTMLElement;
-	let prediction: string;
-	let confidence: string;
+	let prediction: string | null;
+	let confidence: string | null;
 
 	// the html element representing our canvas
 	let canvas: HTMLCanvasElement;
@@ -16,7 +16,7 @@
 
 	// box size refers to size of a single pixel in the grid thus a box takes boxSize ** 2 space in pixels
 	const gridSize: number = 28;
-	const boxSize: number = 16;
+	let boxSize: number = 16;
 
 	const canvasWidth: number = gridSize * boxSize;
 	const canvasHeight: number = gridSize * boxSize;
@@ -29,17 +29,53 @@
 
 	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
+
+		// For mobile devices
+		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+		if (gridSize * boxSize > viewportWidth) {
+			boxSize = 12;
+			canvasContext.canvas.width = gridSize * boxSize;
+			canvasContext.canvas.height = gridSize * boxSize;
+		}
+
+		window.addEventListener('resize', resize);
 	});
 
-	const getPosition = (event: MouseEvent) => {
-		let mouseX = event.clientX - canvas.getBoundingClientRect().x;
-		let mouseY = event.clientY - canvas.getBoundingClientRect().y;
-		return [mouseX, mouseY];
+	const resize = () => {
+		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+		let viewportHeight = Math.max(
+			document.documentElement.clientHeight || 0,
+			window.innerHeight || 0
+		);
+
+		if (viewportWidth < gridSize * 16 || viewportHeight < gridSize * 16) {
+			boxSize = 12;
+		} else {
+			boxSize = 16;
+		}
+
+		canvasContext.canvas.width = gridSize * boxSize;
+		canvasContext.canvas.height = gridSize * boxSize;
 	};
 
-	const getPositionOnGrid = (event: MouseEvent) => {
-		let [mouseX, mouseY] = getPosition(event);
-		return [Math.floor(mouseX / 16), Math.floor(mouseY / 16)];
+	const getPosition = (event: UIEvent) => {
+		let positionX = 0;
+		let positionY = 0;
+
+		if (event instanceof MouseEvent) {
+			positionX = event.clientX - canvas.getBoundingClientRect().x;
+			positionY = event.clientY - canvas.getBoundingClientRect().y;
+		} else if (event instanceof TouchEvent) {
+			positionX = event.touches[0].clientX - canvas.getBoundingClientRect().x;
+			positionY = event.touches[0].clientY - canvas.getBoundingClientRect().y;
+		}
+
+		return [positionX, positionY];
+	};
+
+	const getPositionOnGrid = (event: UIEvent) => {
+		let [positionX, positionY] = getPosition(event);
+		return [Math.floor(positionX / boxSize), Math.floor(positionY / boxSize)];
 	};
 
 	const inBoundCells = (position: [number, number]) => {
@@ -74,18 +110,24 @@
 		});
 	};
 
-	const handleStart = (event: MouseEvent) => {
+	const handleCanvasStart = (event: UIEvent) => {
 		isDrawing = true;
 
 		let [gridX, gridY] = getPositionOnGrid(event);
+
+		// When drawing disable moving the screen
+		if (event instanceof TouchEvent) {
+			event.preventDefault();
+		}
+
 		drawCell([gridX, gridY]);
 	};
 
-	const handleEnd = () => {
+	const handleCanvasEnd = () => {
 		isDrawing = false;
 	};
 
-	const handleMove = (event: MouseEvent) => {
+	const handleCanvasMove = (event: UIEvent) => {
 		if (!isDrawing) return;
 
 		let [gridX, gridY] = getPositionOnGrid(event);
@@ -100,6 +142,9 @@
 		}
 		canvasContext.fillStyle = black;
 		canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
+
+		prediction = null;
+		confidence = null;
 	};
 
 	const toggleInstructions = () => {
@@ -113,7 +158,7 @@
 
 	const postGrid = async () => {
 		// Post the request to backend
-		const res = await fetch('/api/neural', {
+		const res = await fetch('http://localhost:5000/api/neural', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -125,43 +170,51 @@
 		const result = await res.json();
 		prediction = result[0];
 		confidence = result[1];
+
+		// Transform confidence into a percentage
+		confidence = (parseFloat(confidence!) * 100.0).toFixed(1).toString() + '%';
+
+		const resultsElem = document.querySelector('#results');
+		if (resultsElem) {
+			resultsElem.scrollIntoView({ behavior: 'smooth', inline: 'end' });
+		}
 	};
 </script>
 
-<div class="container mx-auto flex flex-col justify-center items-center gap-16">
+<div class="container mx-auto flex flex-col justify-center items-center text-white">
 	<div
-		class="flex flex-col justify-center align-middle h-full gap-16"
+		class="flex flex-col align-middle justify-start md:justify-center h-full gap-8"
 		transition:fade={{ duration: 1000 }}
 	>
-		<h2 class="font-bold text-5xl text-center tracking-wider text-white">
+		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
 			<a href="/">Anttoni Koivu</a>
 		</h2>
-		<h3 class="font-bold text-xl text-center tracking-wider text-white">Neural Network!</h3>
-		<div class="expander flex flex-col">
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<div
-				class="border border-white rounded text-white flex flex-row justify-between py-2 px-4"
+
+		<h3 class="font-bold text-base md:text-xl text-center tracking-wider">Neural Network!</h3>
+
+		<div class="flex flex-col justify-center align-middle">
+			<button
+				class="expander border border-white rounded flex flex-row justify-between py-2 px-4 m-auto"
 				on:click={toggleInstructions}
 			>
-				<h4 class="text-l">Instructions</h4>
+				<h4 class="text-sm md:text-lg">Instructions</h4>
 				<img
 					src="/images/triangle-32.png"
-					class="expander-icon inline-flex align-baseline ml-2"
-					width="16"
+					class="expander-icon inline-flex align-baseline ml-2 mt-1"
+					width="18"
+					height="18"
 					alt="expander triangle"
 					bind:this={expanderIcon}
 				/>
-			</div>
+			</button>
 			{#if instructionsExpanded}
-				<div class="expanded text-white pt-4 px-4" transition:slide={{ duration: 1000 }}>
+				<div class="expander pt-4 m-auto" transition:slide={{ duration: 1000 }}>
 					<p class="text-sm">
 						Start by drawing an image of any number between 0 and 9. Press guess to see if the
 						neural network is correct at predicting what number you've drawn. If you want to start
 						over the drawing process, just press clear to clear the canvas.<br /><br />
-
-						Happy experimenting!
 					</p>
+					<p class="text-center md:text-left">Happy experimenting!</p>
 				</div>
 			{/if}
 		</div>
@@ -172,9 +225,12 @@
 				width={canvasWidth}
 				height={canvasHeight}
 				bind:this={canvas}
-				on:mousedown={handleStart}
-				on:mouseup={handleEnd}
-				on:mousemove={handleMove}
+				on:mousedown={handleCanvasStart}
+				on:mouseup={handleCanvasEnd}
+				on:mousemove={handleCanvasMove}
+				on:touchstart={handleCanvasStart}
+				on:touchend={handleCanvasEnd}
+				on:touchmove={handleCanvasMove}
 			/>
 			<div class="flex flex-row justify-center gap-4">
 				<button
@@ -191,28 +247,52 @@
 				</button>
 			</div>
 		</div>
-		{#if prediction}
-			<div class="flex flex-col justify-left gap-4 text-white expander">
-				<h2>
-					The neural network predicted that you drew: {prediction} with confidence: {confidence}
+		<div class="flex flex-col gap-4 text-white mx-auto expander" id="results">
+			<h3 class="text-xl">Results</h3>
+			{#if prediction}
+				<div class="text-left gap-4 text-white expander mx-auto">
+					<h2 class="text-sm md:text-base">
+						The neural network predicted that you drew: {prediction} with confidence of: {confidence}
+						<br /><br />
+						Did it get it right? :)
+					</h2>
+				</div>
+			{:else}
+				<h2 class="text-sm md:text-base">
+					Results will appear here once a guess has been sent to the neural network!
 				</h2>
-				<h3>Did it get it right? :)</h3>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 </div>
 
 <style>
-	.canvas {
-		display: flex;
-		width: 448px;
-		height: 448px;
-		border: 1px solid white;
-		align-self: center;
+	@media (min-device-width: 320px) and (max-device-width: 460px) {
+		.canvas {
+			width: 336px;
+			height: 336px;
+			border: 1px solid white;
+			align-self: center;
+		}
+
+		.expander {
+			max-width: 600px;
+			min-width: 320px;
+		}
 	}
 
-	.expander {
-		width: 700px;
+	@media (min-device-width: 460px) {
+		.canvas {
+			width: 448px;
+			height: 448px;
+			border: 1px solid white;
+			align-self: center;
+		}
+
+		.expander {
+			max-width: 700px;
+			min-width: 460px;
+		}
 	}
 
 	.expander-icon {

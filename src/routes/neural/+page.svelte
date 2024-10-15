@@ -4,6 +4,7 @@
 
 	let expanderIcon: HTMLElement;
 	let prediction: string;
+	let confidence: string;
 
 	// the html element representing our canvas
 	let canvas: HTMLCanvasElement;
@@ -112,7 +113,7 @@
 
 	const postGrid = async () => {
 		// Post the request to backend
-		const res = await fetch('http://46.101.113.170:3000/neural', {
+		const res = await fetch('http://localhost:5000/neural', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -121,9 +122,9 @@
 		});
 
 		// Get the prediction result
-		const json = await res.json();
-		const result = JSON.stringify(json);
-		prediction = result;
+		const result = await res.json();
+		prediction = result[0];
+		confidence = result[1];
 	};
 </script>
 
@@ -191,8 +192,10 @@
 			</div>
 		</div>
 		{#if prediction}
-			<div class="flex flex-col justify-center gap-4 text-white">
-				<h2>The neural network predicted that you drew: {prediction}</h2>
+			<div class="flex flex-col justify-left gap-4 text-white expander">
+				<h2>
+					The neural network predicted that you drew: {prediction} with confidence: {confidence}
+				</h2>
 				<h3>Did it get it right? :)</h3>
 			</div>
 		{/if}

@@ -17,6 +17,7 @@
 	// box size refers to size of a single pixel in the grid thus a box takes boxSize ** 2 space in pixels
 	const gridSize: number = 28;
 	let boxSize: number = 16;
+	let method: number = 1;
 
 	const canvasWidth: number = gridSize * boxSize;
 	const canvasHeight: number = gridSize * boxSize;
@@ -161,6 +162,7 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
+				method,
 				gridValues
 			})
 		});
@@ -208,14 +210,56 @@
 			</button>
 			{#if instructionsExpanded}
 				<div class="expander pt-4 m-auto" transition:slide={{ duration: 1000 }}>
-					<p class="text-sm">
+					<p class="text-sm tracking-tight">
 						Start by drawing an image of any number between 0 and 9. Press guess to see if the
 						neural network is correct at predicting what number you've drawn. If you want to start
 						over the drawing process, just press clear to clear the canvas.<br /><br />
+
+						Simple NN is a simpler less accurate model and convolutional NN uses slightly more
+						advanced filtering for more accurate results, try to see if you can find differences in
+						their guessing.<br /><br />
 					</p>
 					<p class="text-center md:text-left">Happy experimenting!</p>
 				</div>
 			{/if}
+		</div>
+
+		<div class="flex flex-row expander gap-4 justify-center">
+			<div class="flex items-center ps-4 gap-2">
+				<input
+					id="bordered-radio-1"
+					type="radio"
+					value=""
+					name="bordered-radio"
+					class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+					on:click={() => {
+						method = 0;
+					}}
+				/>
+				<label
+					for="bordered-radio-1"
+					class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-sm"
+					>Simple NN</label
+				>
+			</div>
+			<div class="flex items-center ps-4 gap-2">
+				<input
+					checked
+					id="bordered-radio-2"
+					type="radio"
+					value=""
+					name="bordered-radio"
+					class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+					on:click={() => {
+						method = 1;
+					}}
+				/>
+				<label
+					for="bordered-radio-2"
+					class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-sm"
+					>Convolutional NN</label
+				>
+			</div>
 		</div>
 
 		<div class="flex flex-col justify-center gap-4">

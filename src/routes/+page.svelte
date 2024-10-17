@@ -16,7 +16,6 @@
 		undefined,
 		undefined
 	];
-	let initialLi: HTMLLIElement;
 
 	onMount(() => {
 		items = list.querySelectorAll('li');
@@ -70,12 +69,12 @@
 <div class="container mx-auto flex flex-col justify-center items-center gap-16">
 	<div
 		class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white"
-		transition:fade={{ duration: 1000 }}
+		id="main-transition"
 	>
 		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
 		<nav>
 			<ul bind:this={list} class="flex flex-col gap-4 justify-center">
-				<li class="justify-start underline centering md:mx-auto flex text-xl" bind:this={initialLi}>
+				<li class="justify-start underline centering md:mx-auto flex text-xl">
 					<span bind:this={triangle} class="triangle" />
 					<span bind:this={outerTriangle} class="outertriangle" />
 
@@ -439,5 +438,38 @@
 		100% {
 			background-position: 0% 50%;
 		}
+	}
+
+	@-webkit-keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@-moz-keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	#main-transition {
+		animation: fadeIn 1 ease;
+		-webkit-animation: fadeIn 1s ease;
+		-moz-animation: 1s fadeIn 1s ease;
 	}
 </style>

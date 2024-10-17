@@ -183,10 +183,7 @@
 </script>
 
 <div class="container mx-auto flex flex-col justify-center items-center text-white">
-	<div
-		class="flex flex-col align-middle justify-start md:justify-center h-full gap-8"
-		transition:fade={{ duration: 1000 }}
-	>
+	<div class="flex flex-col align-middle justify-start md:justify-center h-full gap-8">
 		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
 			<a href="/">Anttoni Koivu</a>
 		</h2>

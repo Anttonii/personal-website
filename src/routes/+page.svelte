@@ -66,7 +66,7 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<div class="container mx-auto flex flex-col justify-center items-center gap-16">
+<div class="container mx-auto flex flex-col justify-center items-center">
 	<div
 		class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white"
 		id="main-transition"
@@ -331,7 +331,7 @@
 			text-decoration: none;
 		}
 
-		.centering:hover {
+		.centering > button:hover {
 			color: red;
 		}
 

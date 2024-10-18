@@ -182,126 +182,118 @@
 	};
 </script>
 
-<div class="container mx-auto flex flex-col justify-center items-center text-white">
-	<div class="flex flex-col align-middle justify-start md:justify-center h-full gap-8">
+<div class="container mx-auto flex flex-col justify-center items-center">
+	<div class="flex flex-col justify-start md:justify-center align-middle gap-8 h-full text-white">
 		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
 			<a href="/">Anttoni Koivu</a>
 		</h2>
-
 		<h3 class="font-bold text-base md:text-xl text-center tracking-wider">Neural Network!</h3>
+		<div class="flex flex-col mx-h-90 gap-4">
+			<div class="flex flex-col justify-center expander">
+				<button
+					class="expander border border-white rounded flex flex-row justify-between py-2 px-4 m-auto"
+					on:click={toggleInstructions}
+				>
+					<h4 class="text-sm md:text-lg">Instructions</h4>
+					<img
+						src="/images/triangle-32.png"
+						class="expander-icon inline-flex align-baseline ml-2 mt-1"
+						width="18"
+						height="18"
+						alt="expander triangle"
+						bind:this={expanderIcon}
+					/>
+				</button>
+				{#if instructionsExpanded}
+					<div class="expander" transition:slide={{ duration: 1000 }}>
+						<p class="text-xs md:text-sm tracking-tight pt-4">
+							Start by drawing an image of any number between 0 and 9. Press guess to see if the
+							neural network is correct at predicting what number you've drawn. If you want to start
+							over the drawing process, just press clear to clear the canvas.<br /><br />
 
-		<div class="flex flex-col justify-center align-middle">
-			<button
-				class="expander border border-white rounded flex flex-row justify-between py-2 px-4 m-auto"
-				on:click={toggleInstructions}
-			>
-				<h4 class="text-sm md:text-lg">Instructions</h4>
-				<img
-					src="/images/triangle-32.png"
-					class="expander-icon inline-flex align-baseline ml-2 mt-1"
-					width="18"
-					height="18"
-					alt="expander triangle"
-					bind:this={expanderIcon}
-				/>
-			</button>
-			{#if instructionsExpanded}
-				<div class="expander pt-4 m-auto" transition:slide={{ duration: 1000 }}>
-					<p class="text-sm tracking-tight">
-						Start by drawing an image of any number between 0 and 9. Press guess to see if the
-						neural network is correct at predicting what number you've drawn. If you want to start
-						over the drawing process, just press clear to clear the canvas.<br /><br />
+							Simple NN uses a simpler model than convolutional NN and thus is a little bit less
+							accurate, try to see if you can find differences in their guessing.<br /><br />
+							<span class="text-center md:text-left">Happy experimenting!</span>
+						</p>
+					</div>
+				{/if}
+			</div>
 
-						Simple NN is a simpler less accurate model and convolutional NN uses slightly more
-						advanced filtering for more accurate results, try to see if you can find differences in
-						their guessing.<br /><br />
-					</p>
-					<p class="text-center md:text-left">Happy experimenting!</p>
+			<div class="flex flex-row expander gap-4 justify-center">
+				<div class="flex items-center ps-4 gap-2">
+					<input
+						id="bordered-radio-1"
+						type="radio"
+						value=""
+						name="bordered-radio"
+						class="w-4 h-4"
+						on:click={() => {
+							method = 0;
+						}}
+					/>
+					<label for="bordered-radio-1" class="w-full py-4 ms-2 text-sm">Simple NN</label>
 				</div>
-			{/if}
-		</div>
+				<div class="flex items-center ps-4 gap-2">
+					<input
+						checked
+						id="bordered-radio-2"
+						type="radio"
+						value=""
+						name="bordered-radio"
+						class="w-4 h-4"
+						on:click={() => {
+							method = 1;
+						}}
+					/>
+					<label for="bordered-radio-2" class="w-full py-4 ms-2 text-sm">Convolutional NN</label>
+				</div>
+			</div>
 
-		<div class="flex flex-row expander gap-4 justify-center">
-			<div class="flex items-center ps-4 gap-2">
-				<input
-					id="bordered-radio-1"
-					type="radio"
-					value=""
-					name="bordered-radio"
-					class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-					on:click={() => {
-						method = 0;
-					}}
+			<div class="flex flex-col justify-center gap-8">
+				<canvas
+					class="canvas"
+					width={canvasWidth}
+					height={canvasHeight}
+					bind:this={canvas}
+					on:mousedown={handleCanvasStart}
+					on:mouseup={handleCanvasEnd}
+					on:mousemove={handleCanvasMove}
+					on:touchstart={handleCanvasStart}
+					on:touchend={handleCanvasEnd}
+					on:touchmove={handleCanvasMove}
 				/>
-				<label
-					for="bordered-radio-1"
-					class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-sm"
-					>Simple NN</label
-				>
+				<div class="flex flex-row justify-center gap-8">
+					<button
+						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+						on:click={postGrid}
+					>
+						Guess
+					</button>
+					<button
+						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+						on:click={clearGrid}
+					>
+						Clear
+					</button>
+				</div>
 			</div>
-			<div class="flex items-center ps-4 gap-2">
-				<input
-					checked
-					id="bordered-radio-2"
-					type="radio"
-					value=""
-					name="bordered-radio"
-					class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-					on:click={() => {
-						method = 1;
-					}}
-				/>
-				<label
-					for="bordered-radio-2"
-					class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-sm"
-					>Convolutional NN</label
-				>
-			</div>
-		</div>
 
-		<div class="flex flex-col justify-center gap-4">
-			<canvas
-				class="canvas"
-				width={canvasWidth}
-				height={canvasHeight}
-				bind:this={canvas}
-				on:mousedown={handleCanvasStart}
-				on:mouseup={handleCanvasEnd}
-				on:mousemove={handleCanvasMove}
-				on:touchstart={handleCanvasStart}
-				on:touchend={handleCanvasEnd}
-				on:touchmove={handleCanvasMove}
-			/>
-			<div class="flex flex-row justify-center gap-4">
-				<button
-					class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-					on:click={postGrid}
-				>
-					Guess
-				</button>
-				<button
-					class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-					on:click={clearGrid}
-				>
-					Clear
-				</button>
-			</div>
-		</div>
-		<div class="flex flex-col gap-4 text-white mx-auto expander" id="results">
-			<h3 class="text-xl">Results</h3>
-			{#if prediction}
-				<div class="text-left gap-4 text-white expander mx-auto">
-					<h2 class="text-sm md:text-base">
-						The neural network predicted that you drew: {prediction} with confidence of: {confidence}
-						<br /><br />
-						Did it get it right? :)
+			<div class="flex flex-col gap-4 text-white mx-auto expander" id="results">
+				<h3 class="pt-4 text-sm md:text-xl">Results</h3>
+				{#if prediction}
+					<div class="text-left gap-4 text-white expander mx-auto">
+						<h2 class="text-xs md:text-sm">
+							The neural network predicted that you drew: {prediction} with confidence of: {confidence}
+							<br /><br />
+							Did it get it right? :)
+						</h2>
+					</div>
+				{:else}
+					<h2 class="text-xs md:text-sm">
+						Results will appear here once a guess has been sent to the neural network!
 					</h2>
-				</div>
-			{:else}
-				<h2 class="text-sm md:text-base">
-					Results will appear here once a guess has been sent to the neural network!
-				</h2>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
@@ -339,5 +331,9 @@
 		justify-self: right;
 		transform: rotate(180deg);
 		transition: all 1s;
+	}
+
+	.mx-h-90 {
+		max-height: 90%;
 	}
 </style>

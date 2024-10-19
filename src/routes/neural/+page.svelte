@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 
 	let expanderIcon: HTMLElement;
 	let prediction: string | null;
@@ -19,8 +19,8 @@
 	let boxSize: number = 16;
 	let method: number = 1;
 
-	const canvasWidth: number = gridSize * boxSize;
-	const canvasHeight: number = gridSize * boxSize;
+	// Canvas is a square thus it's sides length is the same for all sides
+	let currCanvasSize: number = gridSize * boxSize;
 
 	const black: string = '#000000';
 	const white: string = '#FFFFFF';
@@ -35,26 +35,31 @@
 		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 		if (gridSize * boxSize > viewportWidth) {
 			boxSize = 12;
-			canvasContext.canvas.width = gridSize * boxSize;
-			canvasContext.canvas.height = gridSize * boxSize;
+			updateCanvasSize();
 		}
 
 		window.addEventListener('resize', resize);
 	});
 
+	const updateCanvasSize = () => {
+		currCanvasSize = boxSize * gridSize;
+
+		canvasContext.canvas.width = currCanvasSize;
+		canvasContext.canvas.height = currCanvasSize;
+	};
+
 	const resize = () => {
 		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
-		if (viewportWidth <= 460) {
+		if (viewportWidth <= 460 && currCanvasSize == 448) {
 			boxSize = 12;
-		} else if (viewportWidth > 460 && boxSize == 12) {
+		} else if (viewportWidth > 460 && currCanvasSize == 336) {
 			boxSize = 16;
 		} else {
 			return;
 		}
 
-		canvasContext.canvas.width = gridSize * boxSize;
-		canvasContext.canvas.height = gridSize * boxSize;
+		updateCanvasSize();
 		clearGrid();
 	};
 
@@ -141,7 +146,7 @@
 			}
 		}
 		canvasContext.fillStyle = black;
-		canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
+		canvasContext.fillRect(0, 0, currCanvasSize, currCanvasSize);
 
 		prediction = null;
 		confidence = null;
@@ -205,7 +210,7 @@
 					/>
 				</button>
 				{#if instructionsExpanded}
-					<div class="expander" transition:slide={{ duration: 1000 }}>
+					<div class="expander ps-4" transition:slide={{ duration: 1000 }}>
 						<p class="text-xs md:text-sm tracking-tight pt-4">
 							Start by drawing an image of any number between 0 and 9. Press guess to see if the
 							neural network is correct at predicting what number you've drawn. If you want to start
@@ -252,12 +257,13 @@
 			<div class="flex flex-col justify-center gap-8">
 				<canvas
 					class="canvas"
-					width={canvasWidth}
-					height={canvasHeight}
+					width={currCanvasSize}
+					height={currCanvasSize}
 					bind:this={canvas}
 					on:mousedown={handleCanvasStart}
 					on:mouseup={handleCanvasEnd}
 					on:mousemove={handleCanvasMove}
+					on:mouseleave={handleCanvasEnd}
 					on:touchstart={handleCanvasStart}
 					on:touchend={handleCanvasEnd}
 					on:touchmove={handleCanvasMove}
@@ -278,7 +284,7 @@
 				</div>
 			</div>
 
-			<div class="flex flex-col gap-4 text-white mx-auto expander" id="results">
+			<div class="flex flex-col gap-4 text-white mx-auto expander ps-4" id="results">
 				<h3 class="pt-4 text-sm md:text-xl">Results</h3>
 				{#if prediction}
 					<div class="text-left gap-4 text-white expander mx-auto">

@@ -236,7 +236,7 @@
 						>Contact</button
 					>
 				</li>
-				<div class="m-auto">
+				<div class="m-auto pb-4">
 					{#if expanded[3]}
 						<div
 							transition:slide={{ duration: 1000 }}

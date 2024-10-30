@@ -152,6 +152,23 @@
 							<div class="divider" />
 							<div class="content">
 								<h2 class="pb-3">
+									<a href="https://github.com/Anttonii/archimago-bot" class="link-text" target="_blank"
+										>Archimago<img
+											src="/images/link-w.png"
+											class="inline-flex align-baseline ml-2"
+											width="16"
+											alt="link"
+										/></a
+									>
+								</h2>
+								<p class="text-sm tracking-tight">
+									A discord chat bot that provides data and images of Sorcery TCG. Built for the Sorcery TCG Finland
+									discord group.
+								</p>
+							</div>
+							<div class="divider" />
+							<div class="content">
+								<h2 class="pb-3">
 									<a href="https://github.com/Anttonii/suikagame" class="link-text" target="_blank"
 										>Suikagame<img
 											src="/images/link-w.png"

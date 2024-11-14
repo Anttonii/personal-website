@@ -156,9 +156,9 @@
 	const toggleInstructions = () => {
 		instructionsExpanded = !instructionsExpanded;
 		if (!instructionsExpanded) {
-			expanderIcon.style.transform = 'rotate(180deg)';
+			expanderIcon.style.transform = 'rotate(90deg)';
 		} else {
-			expanderIcon.style.transform = 'rotate(0deg)';
+			expanderIcon.style.transform = 'rotate(270deg)';
 		}
 	};
 
@@ -201,12 +201,8 @@
 					on:click={toggleInstructions}
 				>
 					<h4 class="text-sm md:text-lg">Instructions</h4>
-					<img
-						src="/images/triangle-32.png"
-						class="expander-icon inline-flex align-baseline ml-2 mt-1"
-						width="18"
-						height="18"
-						alt="expander triangle"
+					<span
+						class="expander-icon triangle inline-flex align-baseline ml-2 mt-1"
 						bind:this={expanderIcon}
 					/>
 				</button>
@@ -336,11 +332,19 @@
 
 	.expander-icon {
 		justify-self: right;
-		transform: rotate(180deg);
+		transform: rotate(90deg);
 		transition: all 1s;
 	}
 
 	.mx-h-90 {
 		max-height: 90%;
+	}
+
+	.triangle {
+		height: 16px;
+		width: 16px;
+		background-color: white;
+		clip-path: polygon(0 0, 0% 100%, 100% 50%);
+		z-index: 1;
 	}
 </style>

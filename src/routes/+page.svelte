@@ -127,6 +127,23 @@
 						>
 							<div class="content">
 								<h2 class="pb-3">
+									<a
+										href="https://github.com/Anttonii/archimago-bot"
+										class="link-text"
+										target="_blank"
+										>Archimago<span class="text-md inline-flex align-baseline pl-2">
+											<Fa icon={faUpRightFromSquare} />
+										</span></a
+									>
+								</h2>
+								<p class="text-sm tracking-tight">
+									A discord chat bot that provides data and images of Sorcery TCG. Built for the
+									Sorcery TCG Finland discord group.
+								</p>
+							</div>
+							<div class="divider" />
+							<div class="content">
+								<h2 class="pb-3">
 									<a href="/neural" class="link-text">
 										Neural Network<span class="text-md inline-flex align-baseline pl-2">
 											<Fa icon={faUpRightFromSquare} />
@@ -155,23 +172,6 @@
 									Tracks movement of barbell from a video file and produces plots of data such as
 									bar speed and deviation from y-axis. Designed to track the movement pattern in
 									movements like squat, bench press and deadlift. Currently work-in-progress.
-								</p>
-							</div>
-							<div class="divider" />
-							<div class="content">
-								<h2 class="pb-3">
-									<a href="https://github.com/Anttonii/archimago-bot" class="link-text" target="_blank"
-										>Archimago<img
-											src="/images/link-w.png"
-											class="inline-flex align-baseline ml-2"
-											width="16"
-											alt="link"
-										/></a
-									>
-								</h2>
-								<p class="text-sm tracking-tight">
-									A discord chat bot that provides data and images of Sorcery TCG. Built for the Sorcery TCG Finland
-									discord group.
 								</p>
 							</div>
 							<div class="divider" />

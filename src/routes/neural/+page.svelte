@@ -35,9 +35,9 @@
 		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 		if (gridSize * boxSize > viewportWidth) {
 			boxSize = 12;
-			updateCanvasSize();
 		}
 
+		updateCanvasSize();
 		window.addEventListener('resize', resize);
 	});
 
@@ -145,6 +145,7 @@
 				gridValues[i][j] = 0;
 			}
 		}
+
 		canvasContext.fillStyle = black;
 		canvasContext.fillRect(0, 0, currCanvasSize, currCanvasSize);
 

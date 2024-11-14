@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { slide, fade } from 'svelte/transition';
+	import Resume from '$lib/assets/Resume.pdf';
 
-	import SocialIcons from '@rodneylab/svelte-social-icons';
+	import Fa from 'svelte-fa';
+	import { faLinkedin, faGithub, faDiscord, faTelegram } from '@fortawesome/free-brands-svg-icons';
+	import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	let list: HTMLUListElement;
 	let items: NodeListOf<HTMLLIElement>;
@@ -75,10 +79,19 @@
 		<nav>
 			<ul bind:this={list} class="flex flex-col gap-4 justify-center">
 				<li class="justify-start underline centering md:mx-auto flex text-xl">
+					<button on:mouseenter={() => moveTriangle(0)} class="pb-4"
+						><a download="AnttoniKoivuResume.pdf" target="_blank" href={Resume}
+							>Resume<span class="text-md inline-flex pl-2">
+								<Fa icon={faUpRightFromSquare} />
+							</span>
+						</a></button
+					>
+				</li>
+				<li class="justify-start underline centering md:mx-auto flex text-xl">
 					<span bind:this={triangle} class="triangle" />
 					<span bind:this={outerTriangle} class="outertriangle" />
 
-					<button on:mouseenter={() => moveTriangle(0)} on:click={() => onButtonClick(0)}
+					<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(0)}
 						>About Me</button
 					>
 				</li>
@@ -91,17 +104,17 @@
 						>
 							<p class="content text-sm tracking-tight">
 								Hi! I'm a 25 year old software developer located in Finland. I enjoy building
-								software and solving problems. I'm mostly interested in full-stack development, but
-								excel more in backend than frontend development.
+								software and solving problems. I'm especially interested in everything data related
+								and am currently studying Machine Learning and Data Science.
 								<br />
 								<br />
-								I am passionate about weightlifting and video games.
+								I am also passionate about basketball, weightlifting and video games.
 							</p>
 						</div>
 					{/if}
 				</div>
 				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(1)}
+					<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(1)}
 						>Projects</button
 					>
 				</li>
@@ -114,14 +127,11 @@
 						>
 							<div class="content">
 								<h2 class="pb-3">
-									<a href="/neural" class="link-text"
-										>Neural Network<img
-											src="/images/link-w.png"
-											class="inline-flex align-baseline ml-2"
-											width="16"
-											alt="link"
-										/></a
-									>
+									<a href="/neural" class="link-text">
+										Neural Network<span class="text-md inline-flex align-baseline pl-2">
+											<Fa icon={faUpRightFromSquare} />
+										</span>
+									</a>
 								</h2>
 								<p class="text-sm tracking-tight">
 									A neural network built on the backend that guesses which number is drawn onto the
@@ -135,13 +145,11 @@
 										href="https://github.com/Anttonii/barbell-tracking"
 										class="link-text"
 										target="_blank"
-										>Barbell Tracking<img
-											src="/images/link-w.png"
-											class="inline-flex align-baseline ml-2"
-											width="16"
-											alt="link"
-										/></a
 									>
+										Barbell Tracking<span class="text-md inline-flex align-baseline pl-2">
+											<Fa icon={faUpRightFromSquare} />
+										</span>
+									</a>
 								</h2>
 								<p class="text-sm tracking-tight">
 									Tracks movement of barbell from a video file and produces plots of data such as
@@ -153,13 +161,10 @@
 							<div class="content">
 								<h2 class="pb-3">
 									<a href="https://github.com/Anttonii/suikagame" class="link-text" target="_blank"
-										>Suikagame<img
-											src="/images/link-w.png"
-											class="inline-flex align-baseline ml-2"
-											width="16"
-											alt="link"
-										/></a
-									>
+										>Suikagame<span class="text-md inline-flex pl-2">
+											<Fa icon={faUpRightFromSquare} />
+										</span>
+									</a>
 								</h2>
 								<p class="text-sm tracking-tight">
 									An implementation of a popular Japanese arcade game written in C++ using SDL2 and
@@ -170,13 +175,10 @@
 							<div class="content">
 								<h2 class="pb-3">
 									<a href="/games" class="link-text"
-										>Web Games<img
-											src="/images/link-w.png"
-											class="inline-flex align-baseline ml-2"
-											width="16"
-											alt="link"
-										/></a
-									>
+										>Web Games<span class="text-md inline-flex align-baseline pl-2">
+											<Fa icon={faUpRightFromSquare} />
+										</span>
+									</a>
 								</h2>
 								<p class="text-sm tracking-tight">
 									Small web browser games implemented with three.js and svelte.
@@ -186,7 +188,7 @@
 					{/if}
 				</div>
 				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(2)}
+					<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(2)}
 						>Education</button
 					>
 				</li>
@@ -232,7 +234,7 @@
 					{/if}
 				</div>
 				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(3)} class=""
+					<button on:mouseenter={() => moveTriangle(4)} on:click={() => onButtonClick(3)} class=""
 						>Contact</button
 					>
 				</li>
@@ -245,7 +247,9 @@
 						>
 							<div class="flex md:flex-row flex-wrap">
 								<div class="flex contact-item align-middle justify-center contact-icon">
-									<SocialIcons network="linkedin" width="32" height="32" fgColor="#ffffff" />
+									<span class="text-3xl">
+										<Fa icon={faLinkedin} />
+									</span>
 									<a
 										href="https://www.linkedin.com/in/anttoni-koivu-a55070230/"
 										target="_blank"
@@ -254,23 +258,23 @@
 									</a>
 								</div>
 								<div class="flex contact-item align-middle justify-center contact-icon">
-									<SocialIcons
-										network="github"
-										width="32"
-										height="32"
-										fgColor="#000000"
-										bgColor="#ffffff"
-									/>
+									<span class="text-3xl">
+										<Fa icon={faGithub} />
+									</span>
 									<a href="https://github.com/Anttonii" target="_blank" class="pt-1 pl-2 underline"
 										>Anttonii
 									</a>
 								</div>
 								<div class="flex contact-item align-middle justify-center contact-icon">
-									<SocialIcons network="discord" width="32" height="32" fgColor="#ffffff" />
+									<span class="text-3xl">
+										<Fa icon={faDiscord} />
+									</span>
 									<span class="pt-1 pl-2">Anttonii</span>
 								</div>
 								<div class="flex contact-item align-middle justify-center contact-icon">
-									<SocialIcons network="telegram" width="32" height="32" fgColor="#ffffff" />
+									<span class="text-3xl">
+										<Fa icon={faTelegram} />
+									</span>
 									<span class="pt-1 pl-2"> Anttoniii </span>
 								</div>
 							</div>

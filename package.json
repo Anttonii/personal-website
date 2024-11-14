@@ -36,6 +36,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@rodneylab/svelte-social-icons": "^0.0.28"
+		"@fortawesome/free-brands-svg-icons": "^6.6.0",
+		"@fortawesome/free-solid-svg-icons": "^6.6.0",
+		"svelte-fa": "^4.0.3"
 	}
 }

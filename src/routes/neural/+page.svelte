@@ -197,7 +197,7 @@
 		<div class="flex flex-col mx-h-90 gap-4">
 			<div class="flex flex-col justify-center expander">
 				<button
-					class="expander border border-white rounded flex flex-row justify-between py-2 px-4 m-auto"
+					class="expander border border-white flex flex-row justify-between py-2 px-2 m-auto"
 					on:click={toggleInstructions}
 				>
 					<h4 class="text-sm md:text-lg">Instructions</h4>

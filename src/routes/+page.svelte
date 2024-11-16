@@ -10,8 +10,10 @@
 
 	let list: HTMLUListElement;
 	let items: NodeListOf<HTMLLIElement>;
+
 	let triangle: HTMLElement;
 	let outerTriangle: HTMLElement;
+
 	let currentIndex = 0;
 	let expanded = [false, false, false, false];
 	let expandedDivs: Array<HTMLDivElement | undefined> = [
@@ -310,7 +312,6 @@
 			max-width: 440px;
 			box-sizing: border-box;
 			border: solid 1px white;
-			border-radius: 4px;
 		}
 
 		nav {
@@ -338,7 +339,6 @@
 			width: 700px;
 			box-sizing: border-box;
 			border: solid 1px white;
-			border-radius: 4px;
 		}
 
 		nav {
@@ -389,7 +389,7 @@
 	}
 
 	.content {
-		padding: 10px 20px 10px 20px;
+		padding: 10px 10px 10px 10px;
 	}
 
 	.contact-icon {
@@ -419,9 +419,9 @@
 		-webkit-text-fill-color: transparent;
 		background-size: 800% 800%;
 
-		-webkit-animation: TextGradientAnimation 10s ease infinite;
-		-moz-animation: TextGradientAnimation 10s ease infinite;
-		animation: TextGradientAnimation 10s ease infinite;
+		-webkit-animation: TextGradientAnimation 5s ease infinite;
+		-moz-animation: TextGradientAnimation 5s ease infinite;
+		animation: TextGradientAnimation 5s ease infinite;
 		transition: all 0.1s ease-in;
 	}
 

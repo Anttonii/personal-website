@@ -1,5 +1,7 @@
 <script lang="ts">
 	import PaginatedTable from './table.svelte';
+	import Court from './court.svelte';
+
 	import Players from '$lib/assets/mock_players.json';
 
 	let data = {
@@ -7,4 +9,7 @@
 	};
 </script>
 
-<PaginatedTable {data} />
+<div class="flex flex-col gap-8">
+	<PaginatedTable {data} />
+	<Court {data} />
+</div>

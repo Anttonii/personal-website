@@ -90,8 +90,8 @@
 					>
 				</li>
 				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<span bind:this={triangle} class="triangle" />
-					<span bind:this={outerTriangle} class="outertriangle" />
+					<span bind:this={triangle} class="triangle"></span>
+					<span bind:this={outerTriangle} class="outertriangle"></span>
 
 					<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(0)}
 						>About Me</button
@@ -143,7 +143,7 @@
 									Sorcery TCG Finland discord group.
 								</p>
 							</div>
-							<div class="divider" />
+							<div class="divider"></div>
 							<div class="content">
 								<h2 class="pb-3">
 									<a href="/neural" class="link-text">
@@ -157,7 +157,7 @@
 									grid.
 								</p>
 							</div>
-							<div class="divider" />
+							<div class="divider"></div>
 							<div class="content">
 								<h2 class="pb-3">
 									<a
@@ -176,7 +176,7 @@
 									movements like squat, bench press and deadlift. Currently work-in-progress.
 								</p>
 							</div>
-							<div class="divider" />
+							<div class="divider"></div>
 							<div class="content">
 								<h2 class="pb-3">
 									<a href="https://github.com/Anttonii/suikagame" class="link-text" target="_blank"
@@ -190,7 +190,7 @@
 									Box2D.
 								</p>
 							</div>
-							<div class="divider" />
+							<div class="divider"></div>
 							<div class="content">
 								<h2 class="pb-3">
 									<a href="/games" class="link-text"

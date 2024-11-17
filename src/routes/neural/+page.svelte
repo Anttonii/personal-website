@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 
+	let innerWidth: number = $state(0);
+	let innerHeight: number = $state(0);
+
 	let expanderIcon: HTMLElement;
-	let prediction: string | null;
-	let confidence: string | null;
+	let prediction: string | null = $state(null);
+	let confidence: string | null = $state(null);
 
 	// the html element representing our canvas
 	let canvas: HTMLCanvasElement;
@@ -20,20 +22,18 @@
 	let method: number = 1;
 
 	// Canvas is a square thus it's sides length is the same for all sides
-	let currCanvasSize: number = gridSize * boxSize;
+	let currCanvasSize: number = $state(gridSize * boxSize);
 
 	const black: string = '#000000';
 	const white: string = '#FFFFFF';
 	const grey: string = '#5A5A5A';
 
-	let instructionsExpanded = false;
+	let instructionsExpanded = $state(false);
 
-	onMount(() => {
+	$effect(() => {
 		canvasContext = canvas.getContext('2d')!;
 
-		// For mobile devices
-		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-		if (gridSize * boxSize > viewportWidth) {
+		if (gridSize * boxSize > innerWidth) {
 			boxSize = 12;
 		}
 
@@ -49,11 +49,9 @@
 	};
 
 	const resize = () => {
-		let viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-
-		if (viewportWidth <= 460 && currCanvasSize == 448) {
+		if (innerWidth <= 460 && currCanvasSize == 448) {
 			boxSize = 12;
-		} else if (viewportWidth > 460 && currCanvasSize == 336) {
+		} else if (innerWidth > 460 && currCanvasSize == 336) {
 			boxSize = 16;
 		} else {
 			return;
@@ -188,6 +186,8 @@
 	};
 </script>
 
+<svelte:window bind:innerWidth bind:innerHeight />
+
 <div class="container mx-auto flex flex-col justify-center items-center">
 	<div class="flex flex-col justify-start md:justify-center align-middle gap-8 h-full text-white">
 		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
@@ -198,13 +198,13 @@
 			<div class="flex flex-col justify-center expander">
 				<button
 					class="expander border border-white flex flex-row justify-between py-2 px-2 m-auto"
-					on:click={toggleInstructions}
+					onclick={toggleInstructions}
 				>
 					<h4 class="text-sm md:text-lg">Instructions</h4>
 					<span
 						class="expander-icon triangle inline-flex align-baseline ml-2 mt-1"
 						bind:this={expanderIcon}
-					/>
+					></span>
 				</button>
 				{#if instructionsExpanded}
 					<div class="expander ps-4" transition:slide={{ duration: 1000 }}>
@@ -229,7 +229,7 @@
 						value=""
 						name="bordered-radio"
 						class="w-4 h-4"
-						on:click={() => {
+						onclick={() => {
 							method = 0;
 						}}
 					/>
@@ -243,7 +243,7 @@
 						value=""
 						name="bordered-radio"
 						class="w-4 h-4"
-						on:click={() => {
+						onclick={() => {
 							method = 1;
 						}}
 					/>
@@ -257,24 +257,24 @@
 					width={currCanvasSize}
 					height={currCanvasSize}
 					bind:this={canvas}
-					on:mousedown={handleCanvasStart}
-					on:mouseup={handleCanvasEnd}
-					on:mousemove={handleCanvasMove}
-					on:mouseleave={handleCanvasEnd}
-					on:touchstart={handleCanvasStart}
-					on:touchend={handleCanvasEnd}
-					on:touchmove={handleCanvasMove}
-				/>
+					onmousedown={handleCanvasStart}
+					onmouseup={handleCanvasEnd}
+					onmousemove={handleCanvasMove}
+					onmouseleave={handleCanvasEnd}
+					ontouchstart={handleCanvasStart}
+					ontouchend={handleCanvasEnd}
+					ontouchmove={handleCanvasMove}
+				></canvas>
 				<div class="flex flex-row justify-center gap-8">
 					<button
 						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-						on:click={postGrid}
+						onclick={postGrid}
 					>
 						Guess
 					</button>
 					<button
 						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-						on:click={clearGrid}
+						onclick={clearGrid}
 					>
 						Clear
 					</button>

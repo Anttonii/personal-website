@@ -1,5 +1,7 @@
 <script lang="ts">
 	interface ShootingZone {
+		player: string;
+		explanation: string;
 		percentage: number;
 		average_percentage: number;
 	}
@@ -28,7 +30,9 @@
 	let freeThrowHeight = Math.ceil(courtHeight * 0.4);
 
 	let canvas: HTMLCanvasElement;
+	let toolTipCanvas: HTMLCanvasElement;
 	let canvasContext: CanvasRenderingContext2D;
+	let toolTipCanvasContext: CanvasRenderingContext2D;
 
 	let seasons: number[] = [];
 
@@ -46,6 +50,7 @@
 	let goodShooterColor = '#00FF00A0';
 	let averageShooterColor = '#FFFF00A0';
 	let badShooterColor = '#FF0000A0';
+	let tooltipBoxColor = '#505050A0';
 
 	let loaded = $state(false);
 
@@ -73,6 +78,7 @@
 
 	$effect(() => {
 		canvasContext = canvas.getContext('2d')!;
+		toolTipCanvasContext = toolTipCanvas.getContext('2d')!;
 
 		getAllSeasons();
 		createRegions();
@@ -149,15 +155,15 @@
 		rightCornerThreeRegion.closePath();
 
 		line3pRegion = new Path2D();
-		line3pRegion.moveTo(courtWidth, 70);
-		line3pRegion.lineTo(courtWidth - corner3pWidth, 70);
+		line3pRegion.moveTo(courtWidth, 0);
+		line3pRegion.lineTo(courtWidth - corner3pWidth, 0);
 		line3pRegion.lineTo(courtWidth - corner3pWidth, corner3pLineHeight);
 		line3pRegion.ellipse(courtWidth / 2, corner3pLineHeight, 295, 199, 0, 0, Math.PI, false);
-		line3pRegion.lineTo(corner3pWidth, 70);
-		line3pRegion.lineTo(0, 70);
+		line3pRegion.lineTo(corner3pWidth, 0);
+		line3pRegion.lineTo(0, 0);
 		line3pRegion.lineTo(0, courtHeight);
 		line3pRegion.lineTo(courtWidth, courtHeight);
-		line3pRegion.lineTo(courtWidth, 70);
+		line3pRegion.lineTo(courtWidth, 0);
 		line3pRegion.closePath();
 
 		closeRegion = new Path2D();
@@ -233,13 +239,20 @@
 			[freeThrowArc],
 			0,
 			0,
-			{ percentage: player.ft_percent, average_percentage: seasonAverage.ft_percent }
+			{
+				player: player.player,
+				explanation: 'Free throws',
+				percentage: player.ft_percent,
+				average_percentage: seasonAverage.ft_percent
+			}
 		]);
 		zoneRegions.push([
 			[leftCornerThreeRegion, rightCornerThreeRegion],
 			0,
 			0,
 			{
+				player: player.player,
+				explanation: 'Corner threes',
 				percentage: player.corner_3_point_percent,
 				average_percentage: seasonAverage.corner_3_point_percent
 			}
@@ -249,8 +262,10 @@
 			0,
 			0,
 			{
-				percentage: player.fg_percent_from_x3p_range,
-				average_percentage: seasonAverage.fg_percent_from_x3p_range
+				player: player.player,
+				explanation: 'Three pointers',
+				percentage: player.x3p_percent,
+				average_percentage: seasonAverage.x3p_percent
 			}
 		]);
 		zoneRegions.push([
@@ -258,6 +273,8 @@
 			0,
 			0,
 			{
+				player: player.player,
+				explanation: 'Long twos',
 				percentage: player.fg_percent_from_x16_3p_range,
 				average_percentage: seasonAverage.fg_percent_from_x16_3p_range
 			}
@@ -267,6 +284,8 @@
 			0,
 			0,
 			{
+				player: player.player,
+				explanation: 'Midrange twos',
 				percentage: player.fg_percent_from_x10_16_range,
 				average_percentage: seasonAverage.fg_percent_from_x10_16_range
 			}
@@ -276,6 +295,8 @@
 			0,
 			0,
 			{
+				player: player.player,
+				explanation: 'Under the rim',
 				percentage: player.fg_percent_from_x0_3_range,
 				average_percentage: seasonAverage.fg_percent_from_x0_3_range
 			}
@@ -309,6 +330,45 @@
 		canvasContext.fill(backboardHoopRect);
 	};
 
+	const drawTooltip = (mouseX: number, mouseY: number) => {
+		let tooltipWidth = 200;
+		let tooltipHeight = 80;
+
+		let tooltipX = mouseX + 15;
+		let tooltipY = mouseY - 15;
+
+		if (tooltipX + tooltipWidth > canvas.width) {
+			tooltipX = mouseX - 215;
+		}
+
+		if (tooltipY + tooltipHeight > canvas.height) {
+			tooltipY = mouseY - 85;
+		}
+
+		if (currentRegion == -1) {
+			return;
+		}
+
+		const region = zoneRegions[currentRegion];
+		toolTipCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
+		toolTipCanvasContext.fillStyle = tooltipBoxColor;
+		toolTipCanvasContext.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+		toolTipCanvasContext.fillStyle = 'white';
+		toolTipCanvasContext.fillText('Zone: ' + region[3].explanation, tooltipX + 20, tooltipY + 15);
+		toolTipCanvasContext.fillText('Player: ' + region[3].player, tooltipX + 20, tooltipY + 35);
+		toolTipCanvasContext.fillText(
+			'Shooting %: ' + region[3].percentage,
+			tooltipX + 20,
+			tooltipY + 55
+		);
+		toolTipCanvasContext.fillText(
+			'League Average %: ' + region[3].average_percentage,
+			tooltipX + 20,
+			tooltipY + 75
+		);
+	};
+
 	const drawShootingZones = () => {
 		drawBackground();
 
@@ -317,7 +377,8 @@
 			return;
 		}
 
-		for (var zone of zoneRegions) {
+		for (let i = 0; i < zoneRegions.length; i++) {
+			let zone = zoneRegions[i];
 			const color = getShootingColor(zone[3].percentage, zone[3].average_percentage);
 			canvasContext.globalAlpha = zone[1];
 			canvasContext.fillStyle = color;
@@ -362,14 +423,14 @@
 	}
 
 	const handleMouse = (event: MouseEvent) => {
-		const positionX = event.clientX - canvas.getBoundingClientRect().x;
-		const positionY = event.clientY - canvas.getBoundingClientRect().y;
+		const mouseX = event.clientX - canvas.getBoundingClientRect().x;
+		const mouseY = event.clientY - canvas.getBoundingClientRect().y;
 
 		let foundRegion: number = -1;
 
 		for (let i = 0; i < zoneRegions.length; i++) {
 			for (var region of zoneRegions[i][0]) {
-				if (canvasContext.isPointInPath(region, positionX, positionY)) {
+				if (canvasContext.isPointInPath(region, mouseX, mouseY)) {
 					foundRegion = i;
 				}
 			}
@@ -398,6 +459,8 @@
 
 			animateShootingZones();
 		}
+
+		drawTooltip(mouseX, mouseY);
 	};
 
 	const handleMouseEnter = () => {
@@ -407,6 +470,9 @@
 	};
 
 	const handleMouseExit = () => {
+		toolTipCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
+		currentRegion = -1;
+
 		for (let i = 0; i < zoneRegions.length; i++) {
 			zoneRegions[i][2] = 0;
 		}
@@ -452,17 +518,21 @@
 </script>
 
 <div class="flex flex-col gap-2">
-	<canvas
-		onmouseenter={(_) => handleMouseEnter()}
-		onmousemove={(e) => handleMouse(e)}
-		onmouseleave={(_) => handleMouseExit()}
-		bind:this={canvas}
-		width={courtWidth}
-		height={courtHeight}
-	>
-	</canvas>
+	<div class="relative" style="width: {courtWidth}; height: {courtHeight};">
+		<canvas bind:this={canvas} width={courtWidth} height={courtHeight} class="z-0"> </canvas>
+		<canvas
+			onmouseenter={(_) => handleMouseEnter()}
+			onmousemove={(e) => handleMouse(e)}
+			onmouseleave={(_) => handleMouseExit()}
+			bind:this={toolTipCanvas}
+			width={courtWidth}
+			height={courtHeight}
+			class="absolute top-0 left-0 z-10"
+		>
+		</canvas>
+	</div>
 	{#if loaded}
-		<div class="flex flex-row gap-2 items-end justify-end">
+		<div class="flex flex-row gap-2 items-end justify-end" style="z-index:5">
 			<label for="seasons" class="text-md font-medium my-auto dark:text-white align-middle"
 				>Season:
 			</label>

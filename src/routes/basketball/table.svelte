@@ -77,9 +77,11 @@
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class="w-full max-w-4xl overflow-x-scroll">
+<div class="w-full">
 	{#if loading}
-		<table class="border-collapse border border-slate-500 table-auto w-full">
+		<table
+			class="border-collapse max-w-2xl min-w-full border border-slate-500 table-fixed md:overflow-x-scroll"
+		>
 			<thead>
 				<tr>
 					{#each playerColumns as column, i}

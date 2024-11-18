@@ -52,16 +52,24 @@
 	let selectedSeason = $state();
 
 	let freeThrowRegion: Path2D;
-	let freeThrowArcRegion: Path2D;
-	let freeThrowCounteArcRegion: Path2D;
 	let paintRegion: Path2D;
+	let closeRegion: Path2D;
+	let leftCornerThreeRegion: Path2D;
+	let rightCornerThreeRegion: Path2D;
+	let line3pRegion: Path2D;
+	let short2pRegion: Path2D;
+	let midrange2pRegion: Path2D;
+	let long2pRegion: Path2D;
+
+	let freeThrowArc: Path2D;
+	let freeThrowCounterArc: Path2D;
 	let line3pArc: Path2D;
 	let basketHoopArc: Path2D;
 	let backboardLine: Path2D;
 	let backboardHoopRect: Path2D;
 
-	let currentRegion: Path2D | undefined;
-	let zoneRegions: [Path2D, number, number, ShootingZone][];
+	let currentRegion: number = -1;
+	let zoneRegions: [Path2D[], number, number, ShootingZone][];
 
 	$effect(() => {
 		canvasContext = canvas.getContext('2d')!;
@@ -104,27 +112,18 @@
 		paintRegion.lineTo(freeThrowEnd, 0);
 		paintRegion.closePath();
 
-		freeThrowArcRegion = new Path2D();
-		freeThrowArcRegion.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, false);
-		freeThrowArcRegion.closePath();
+		freeThrowArc = new Path2D();
+		freeThrowArc.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, false);
+		freeThrowArc.closePath();
 
-		freeThrowCounteArcRegion = new Path2D();
-		freeThrowCounteArcRegion.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, true);
-		freeThrowCounteArcRegion.closePath();
+		freeThrowCounterArc = new Path2D();
+		freeThrowCounterArc.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, true);
+		freeThrowCounterArc.closePath();
 
 		line3pArc = new Path2D();
 		line3pArc.moveTo(courtWidth - corner3pWidth, 0);
 		line3pArc.lineTo(courtWidth - corner3pWidth, corner3pLineHeight);
-		line3pArc.ellipse(
-			courtWidth / 2,
-			corner3pLineHeight,
-			295, // center x
-			199, // center y
-			0,
-			0,
-			Math.PI,
-			false
-		);
+		line3pArc.ellipse(courtWidth / 2, corner3pLineHeight, 295, 199, 0, 0, Math.PI, false);
 		line3pArc.lineTo(corner3pWidth, 0);
 		line3pArc.closePath();
 
@@ -140,6 +139,80 @@
 		backboardHoopRect = new Path2D();
 		backboardHoopRect.rect(halfCourtWidth - 4, basketHeight - 16, 8, 8);
 		backboardHoopRect.closePath();
+
+		leftCornerThreeRegion = new Path2D();
+		leftCornerThreeRegion.rect(0, 0, corner3pWidth, 70);
+		leftCornerThreeRegion.closePath();
+
+		rightCornerThreeRegion = new Path2D();
+		rightCornerThreeRegion.rect(courtWidth - corner3pWidth, 0, corner3pWidth, 70);
+		rightCornerThreeRegion.closePath();
+
+		line3pRegion = new Path2D();
+		line3pRegion.moveTo(courtWidth, 70);
+		line3pRegion.lineTo(courtWidth - corner3pWidth, 70);
+		line3pRegion.lineTo(courtWidth - corner3pWidth, corner3pLineHeight);
+		line3pRegion.ellipse(courtWidth / 2, corner3pLineHeight, 295, 199, 0, 0, Math.PI, false);
+		line3pRegion.lineTo(corner3pWidth, 70);
+		line3pRegion.lineTo(0, 70);
+		line3pRegion.lineTo(0, courtHeight);
+		line3pRegion.lineTo(courtWidth, courtHeight);
+		line3pRegion.lineTo(courtWidth, 70);
+		line3pRegion.closePath();
+
+		closeRegion = new Path2D();
+		closeRegion.arc(courtWidth / 2, 26, 70, 0, Math.PI, false);
+		closeRegion.closePath();
+
+		midrange2pRegion = new Path2D();
+		midrange2pRegion.moveTo(courtWidth - corner3pWidth - 50, 0);
+		midrange2pRegion.lineTo(courtWidth - corner3pWidth - 200, 0);
+		midrange2pRegion.lineTo(courtWidth - corner3pWidth - 200, corner3pLineHeight - 110);
+		midrange2pRegion.ellipse(
+			courtWidth / 2,
+			corner3pLineHeight - 110,
+			95,
+			60,
+			0,
+			0,
+			Math.PI,
+			false
+		);
+		midrange2pRegion.lineTo(corner3pWidth + 200, 0);
+		midrange2pRegion.lineTo(corner3pWidth + 50, 0);
+		midrange2pRegion.lineTo(corner3pWidth + 50, corner3pLineHeight - 25);
+		midrange2pRegion.ellipse(
+			courtWidth / 2,
+			corner3pLineHeight - 25,
+			245,
+			169,
+			0,
+			Math.PI,
+			0,
+			true
+		);
+		midrange2pRegion.lineTo(courtWidth - corner3pWidth - 50, 0);
+		midrange2pRegion.closePath();
+
+		short2pRegion = new Path2D();
+		short2pRegion.moveTo(courtWidth - corner3pWidth - 50, 0);
+		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, 0);
+		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, corner3pLineHeight - 110);
+		short2pRegion.ellipse(courtWidth / 2, corner3pLineHeight - 110, 95, 60, 0, 0, Math.PI, false);
+		short2pRegion.lineTo(corner3pWidth + 200, 0);
+		short2pRegion.closePath();
+
+		long2pRegion = new Path2D();
+		long2pRegion.moveTo(courtWidth - corner3pWidth, 0);
+		long2pRegion.lineTo(courtWidth - corner3pWidth - 50, 0);
+		long2pRegion.lineTo(courtWidth - corner3pWidth - 50, corner3pLineHeight - 25);
+		long2pRegion.ellipse(courtWidth / 2, corner3pLineHeight - 25, 245, 169, 0, 0, Math.PI, false);
+		long2pRegion.lineTo(corner3pWidth + 50, 0);
+		long2pRegion.lineTo(corner3pWidth, 0);
+		long2pRegion.lineTo(corner3pWidth, corner3pLineHeight);
+		long2pRegion.ellipse(courtWidth / 2, corner3pLineHeight, 295, 199, 0, Math.PI, 0, true);
+		long2pRegion.lineTo(courtWidth - corner3pWidth, 0);
+		long2pRegion.closePath();
 	};
 
 	const setupShootingZones = () => {
@@ -157,13 +230,49 @@
 
 		// Setup shooting regions
 		zoneRegions.push([
-			freeThrowArcRegion,
+			[freeThrowArc],
 			0,
 			0,
 			{ percentage: player.ft_percent, average_percentage: seasonAverage.ft_percent }
 		]);
 		zoneRegions.push([
-			paintRegion,
+			[leftCornerThreeRegion, rightCornerThreeRegion],
+			0,
+			0,
+			{
+				percentage: player.corner_3_point_percent,
+				average_percentage: seasonAverage.corner_3_point_percent
+			}
+		]);
+		zoneRegions.push([
+			[line3pRegion],
+			0,
+			0,
+			{
+				percentage: player.fg_percent_from_x3p_range,
+				average_percentage: seasonAverage.fg_percent_from_x3p_range
+			}
+		]);
+		zoneRegions.push([
+			[long2pRegion],
+			0,
+			0,
+			{
+				percentage: player.fg_percent_from_x16_3p_range,
+				average_percentage: seasonAverage.fg_percent_from_x16_3p_range
+			}
+		]);
+		zoneRegions.push([
+			[midrange2pRegion],
+			0,
+			0,
+			{
+				percentage: player.fg_percent_from_x10_16_range,
+				average_percentage: seasonAverage.fg_percent_from_x10_16_range
+			}
+		]);
+		zoneRegions.push([
+			[short2pRegion],
 			0,
 			0,
 			{
@@ -185,10 +294,10 @@
 		// Free throw line
 		canvasContext.lineWidth = 3.0;
 		canvasContext.stroke(paintRegion);
-		canvasContext.stroke(freeThrowArcRegion);
+		canvasContext.stroke(freeThrowArc);
 
 		canvasContext.setLineDash([22]);
-		canvasContext.stroke(freeThrowCounteArcRegion);
+		canvasContext.stroke(freeThrowCounterArc);
 		canvasContext.setLineDash([]);
 
 		// Draw the basket
@@ -210,9 +319,13 @@
 
 		for (var zone of zoneRegions) {
 			const color = getShootingColor(zone[3].percentage, zone[3].average_percentage);
-			canvasContext.fillStyle = color;
 			canvasContext.globalAlpha = zone[1];
-			canvasContext.fill(zone[0]);
+			canvasContext.fillStyle = color;
+
+			for (var region of zone[0]) {
+				canvasContext.fill(region);
+			}
+
 			canvasContext.globalAlpha = 1;
 		}
 
@@ -241,11 +354,10 @@
 
 		if (redraw) {
 			drawShootingZones();
-			drawCourt();
 
 			setTimeout(() => {
 				requestAnimationFrame(animateShootingZones);
-			}, 30);
+			}, 40);
 		}
 	}
 
@@ -256,26 +368,45 @@
 		let foundRegion: number = -1;
 
 		for (let i = 0; i < zoneRegions.length; i++) {
-			if (canvasContext.isPointInPath(zoneRegions[i][0], positionX, positionY)) {
-				foundRegion = i;
-			} else {
+			for (var region of zoneRegions[i][0]) {
+				if (canvasContext.isPointInPath(region, positionX, positionY)) {
+					foundRegion = i;
+				}
+			}
+
+			if (foundRegion != i) {
 				zoneRegions[i][2] = 0;
+			} else {
+				break;
 			}
 		}
 
 		if (foundRegion == -1) {
-			currentRegion = undefined;
+			currentRegion = foundRegion;
 			return;
 		}
 
-		if (zoneRegions[foundRegion][0] != currentRegion || currentRegion === undefined) {
-			currentRegion = zoneRegions[foundRegion][0];
+		if (foundRegion != currentRegion || currentRegion == -1) {
+			currentRegion = foundRegion;
 			zoneRegions[foundRegion][2] = 1;
+
+			for (let i = 0; i < zoneRegions.length; i++) {
+				if (i != currentRegion) {
+					zoneRegions[i][2] = 0;
+				}
+			}
+
 			animateShootingZones();
 		}
 	};
 
-	const cleanShootingZones = () => {
+	const handleMouseEnter = () => {
+		for (let i = 0; i < zoneRegions.length; i++) {
+			zoneRegions[i][1] = 0;
+		}
+	};
+
+	const handleMouseExit = () => {
 		for (let i = 0; i < zoneRegions.length; i++) {
 			zoneRegions[i][2] = 0;
 		}
@@ -322,8 +453,9 @@
 
 <div class="flex flex-col gap-2">
 	<canvas
+		onmouseenter={(_) => handleMouseEnter()}
 		onmousemove={(e) => handleMouse(e)}
-		onmouseleave={(_) => cleanShootingZones()}
+		onmouseleave={(_) => handleMouseExit()}
 		bind:this={canvas}
 		width={courtWidth}
 		height={courtHeight}

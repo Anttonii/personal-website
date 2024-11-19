@@ -3,11 +3,15 @@
 	import Court from './court.svelte';
 
 	import Players from '$lib/assets/mock_players.json';
-	import AlltimeAverages from '$lib/assets/averages_season.json';
+	import SeasonAverages from '$lib/assets/averages_season.json';
+	import AlltimeAverages from '$lib/assets/averages_alltime.json';
+	import PositionAverages from '$lib/assets/averages_position.json';
 
 	let data = {
 		players: Players,
-		averages: AlltimeAverages
+		seasonAverages: SeasonAverages,
+		alltimeAverages: AlltimeAverages,
+		positionAverages: PositionAverages
 	};
 </script>
 

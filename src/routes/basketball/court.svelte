@@ -1,5 +1,10 @@
 <script lang="ts">
+	import Fa from 'svelte-fa';
+	import { faX, faCheck, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+	import { onMount } from 'svelte';
+
 	interface ShootingZone {
+		zone: string;
 		player: string;
 		explanation: string;
 		percentage: number;
@@ -47,14 +52,19 @@
 	 * free throw line and the paints boundaries. */
 	let lineColor = 'rgb(0 0 153)';
 
-	let goodShooterColor = '#00FF00A0';
-	let averageShooterColor = '#FFFF00A0';
-	let badShooterColor = '#FF0000A0';
-	let tooltipBoxColor = '#505050A0';
+	let goodShooterColor = '#03C04A';
+	let averageShooterColor = '#FCAE1E';
+	let badShooterColor = '#E3242B';
+
+	let tooltipBoxBGColor = '#303030FF';
+	let tooltipBoxColor = '#505050FF';
 
 	let loaded = $state(false);
 
 	let selectedSeason = $state();
+	let checkedDataset = $state('season');
+	let highlightZones = $state(false);
+	let showInformation = $state(false);
 
 	let freeThrowRegion: Path2D;
 	let paintRegion: Path2D;
@@ -76,7 +86,7 @@
 	let currentRegion: number = -1;
 	let zoneRegions: [Path2D[], number, number, ShootingZone][];
 
-	$effect(() => {
+	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
 		toolTipCanvasContext = toolTipCanvas.getContext('2d')!;
 
@@ -89,6 +99,11 @@
 		loaded = true;
 	});
 
+	$effect(() => {
+		updateShootingZones();
+		requestAnimationFrame(drawShootingZones);
+	});
+
 	const updateCanvasSize = (w: number, h: number) => {
 		canvas.width = w;
 		canvas.height = h;
@@ -97,7 +112,6 @@
 	const drawBackground = () => {
 		canvasContext.fillStyle = backgroundColor;
 		canvasContext.fillRect(0, 0, courtWidth, courtHeight);
-		canvasContext.closePath();
 
 		// Draw the paint
 		canvasContext.fillStyle = paintColor;
@@ -105,8 +119,6 @@
 	};
 
 	const createRegions = () => {
-		zoneRegions = new Array();
-
 		freeThrowRegion = new Path2D();
 		freeThrowRegion.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, false);
 		freeThrowRegion.closePath();
@@ -170,6 +182,14 @@
 		closeRegion.arc(courtWidth / 2, 26, 70, 0, Math.PI, false);
 		closeRegion.closePath();
 
+		short2pRegion = new Path2D();
+		short2pRegion.moveTo(courtWidth - corner3pWidth - 50, 0);
+		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, 0);
+		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, corner3pLineHeight - 110);
+		short2pRegion.ellipse(courtWidth / 2, corner3pLineHeight - 110, 95, 60, 0, 0, Math.PI, false);
+		short2pRegion.lineTo(corner3pWidth + 200, 0);
+		short2pRegion.closePath();
+
 		midrange2pRegion = new Path2D();
 		midrange2pRegion.moveTo(courtWidth - corner3pWidth - 50, 0);
 		midrange2pRegion.lineTo(courtWidth - corner3pWidth - 200, 0);
@@ -200,14 +220,6 @@
 		midrange2pRegion.lineTo(courtWidth - corner3pWidth - 50, 0);
 		midrange2pRegion.closePath();
 
-		short2pRegion = new Path2D();
-		short2pRegion.moveTo(courtWidth - corner3pWidth - 50, 0);
-		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, 0);
-		short2pRegion.lineTo(courtWidth - corner3pWidth - 200, corner3pLineHeight - 110);
-		short2pRegion.ellipse(courtWidth / 2, corner3pLineHeight - 110, 95, 60, 0, 0, Math.PI, false);
-		short2pRegion.lineTo(corner3pWidth + 200, 0);
-		short2pRegion.closePath();
-
 		long2pRegion = new Path2D();
 		long2pRegion.moveTo(courtWidth - corner3pWidth, 0);
 		long2pRegion.lineTo(courtWidth - corner3pWidth - 50, 0);
@@ -222,15 +234,17 @@
 	};
 
 	const setupShootingZones = () => {
+		zoneRegions = new Array();
+
 		const season = selectedSeason ? (selectedSeason as number) : -1;
 		if (season == -1) {
 			return;
 		}
 
 		const player = getPlayer(season);
-		const seasonAverage = getSeasonAverage(season);
+		const average = getAverage(season);
 
-		if (!player || !seasonAverage) {
+		if (!player || !average) {
 			return;
 		}
 
@@ -240,10 +254,11 @@
 			0,
 			0,
 			{
+				zone: 'ft',
 				player: player.player,
 				explanation: 'Free throws',
 				percentage: player.ft_percent,
-				average_percentage: seasonAverage.ft_percent
+				average_percentage: average.ft_percent
 			}
 		]);
 		zoneRegions.push([
@@ -251,10 +266,11 @@
 			0,
 			0,
 			{
+				zone: 'ct',
 				player: player.player,
 				explanation: 'Corner threes',
 				percentage: player.corner_3_point_percent,
-				average_percentage: seasonAverage.corner_3_point_percent
+				average_percentage: average.corner_3_point_percent
 			}
 		]);
 		zoneRegions.push([
@@ -262,10 +278,11 @@
 			0,
 			0,
 			{
+				zone: 'tp',
 				player: player.player,
 				explanation: 'Three pointers',
 				percentage: player.x3p_percent,
-				average_percentage: seasonAverage.x3p_percent
+				average_percentage: average.x3p_percent
 			}
 		]);
 		zoneRegions.push([
@@ -273,10 +290,11 @@
 			0,
 			0,
 			{
+				zone: 'lt',
 				player: player.player,
 				explanation: 'Long twos',
 				percentage: player.fg_percent_from_x16_3p_range,
-				average_percentage: seasonAverage.fg_percent_from_x16_3p_range
+				average_percentage: average.fg_percent_from_x16_3p_range
 			}
 		]);
 		zoneRegions.push([
@@ -284,10 +302,11 @@
 			0,
 			0,
 			{
+				zone: 'mrt',
 				player: player.player,
 				explanation: 'Midrange twos',
 				percentage: player.fg_percent_from_x10_16_range,
-				average_percentage: seasonAverage.fg_percent_from_x10_16_range
+				average_percentage: average.fg_percent_from_x10_16_range
 			}
 		]);
 		zoneRegions.push([
@@ -295,12 +314,46 @@
 			0,
 			0,
 			{
+				zone: 'utr',
 				player: player.player,
 				explanation: 'Under the rim',
 				percentage: player.fg_percent_from_x0_3_range,
-				average_percentage: seasonAverage.fg_percent_from_x0_3_range
+				average_percentage: average.fg_percent_from_x0_3_range
 			}
 		]);
+	};
+
+	const updateShootingZones = () => {
+		const season = selectedSeason ? (selectedSeason as number) : -1;
+		if (season == -1) {
+			return;
+		}
+
+		const average = getAverage(season);
+		if (!average) {
+			return;
+		}
+
+		for (let i = 0; i < zoneRegions.length; i++) {
+			let zone = zoneRegions[i][3].zone;
+			let value = 0;
+
+			if (zone == 'ft') {
+				value = average.ft_percent;
+			} else if (zone == 'ct') {
+				value = average.corner_3_point_percent;
+			} else if (zone == 'tp') {
+				value = average.x3p_percent;
+			} else if (zone == 'lt') {
+				value = average.fg_percent_from_x16_3p_range;
+			} else if (zone == 'mrt') {
+				value = average.fg_percent_from_x10_16_range;
+			} else if (zone == 'utr') {
+				value = average.fg_percent_from_x0_3_range;
+			}
+
+			zoneRegions[i][3].average_percentage = value;
+		}
 	};
 
 	/**
@@ -331,42 +384,93 @@
 	};
 
 	const drawTooltip = (mouseX: number, mouseY: number) => {
-		let tooltipWidth = 200;
-		let tooltipHeight = 80;
+		toolTipCanvasContext.font = '18px Inter, sans-serif';
 
-		let tooltipX = mouseX + 15;
-		let tooltipY = mouseY - 15;
+		const region = zoneRegions[currentRegion];
+		const fontSize = 18; // in pixels
+		const title = 'Zone: ' + region[3].explanation;
+		const fields = [
+			'Player: ' + region[3].player,
+			'Shooting %: ' + region[3].percentage.toFixed(2),
+			'League Average %: ' + region[3].average_percentage.toFixed(2)
+		];
+		const maxWidth = Math.max(
+			...fields.map((elem) => toolTipCanvasContext.measureText(elem).width)
+		);
+
+		let tooltipOffsetY = 15;
+		let tooltipTextOffsetX = 10;
+		let tooltipTextOffsetY = 10;
+
+		let tooltipWidth = Math.ceil(maxWidth) + 2 * tooltipTextOffsetX;
+		let tooltipHeight = (fields.length + 1) * fontSize + tooltipTextOffsetY * 2;
+
+		let tooltipX = mouseX - tooltipWidth / 2;
+		let tooltipY = mouseY - tooltipHeight - tooltipOffsetY;
 
 		if (tooltipX + tooltipWidth > canvas.width) {
-			tooltipX = mouseX - 215;
+			tooltipX = mouseX - tooltipWidth;
+		} else if (tooltipX < 0) {
+			tooltipX = mouseX;
 		}
 
-		if (tooltipY + tooltipHeight > canvas.height) {
-			tooltipY = mouseY - 85;
+		if (tooltipY < 0) {
+			tooltipY = mouseY + tooltipOffsetY;
 		}
 
 		if (currentRegion == -1) {
 			return;
 		}
 
-		const region = zoneRegions[currentRegion];
 		toolTipCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
+
+		toolTipCanvasContext.fillStyle = tooltipBoxBGColor;
+		toolTipCanvasContext.fillRect(tooltipX + 2, tooltipY + 2, tooltipWidth + 3, tooltipHeight + 3);
 		toolTipCanvasContext.fillStyle = tooltipBoxColor;
 		toolTipCanvasContext.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
 
 		toolTipCanvasContext.fillStyle = 'white';
-		toolTipCanvasContext.fillText('Zone: ' + region[3].explanation, tooltipX + 20, tooltipY + 15);
-		toolTipCanvasContext.fillText('Player: ' + region[3].player, tooltipX + 20, tooltipY + 35);
 		toolTipCanvasContext.fillText(
-			'Shooting %: ' + region[3].percentage,
-			tooltipX + 20,
-			tooltipY + 55
+			title,
+			tooltipX + tooltipTextOffsetX,
+			tooltipY + tooltipTextOffsetY * 2
 		);
-		toolTipCanvasContext.fillText(
-			'League Average %: ' + region[3].average_percentage,
-			tooltipX + 20,
-			tooltipY + 75
-		);
+		toolTipCanvasContext.fillRect(tooltipX + 5, tooltipY + 27, tooltipWidth - 10, 2);
+		for (let i = 0; i < fields.length; i++) {
+			toolTipCanvasContext.fillText(
+				fields[i],
+				tooltipX + tooltipTextOffsetX,
+				tooltipY + 30 + (i + 1) * fontSize
+			);
+		}
+	};
+
+	const drawHelp = () => {
+		canvasContext.fillStyle = 'white';
+		canvasContext.font = '16px Inter, sans-serif';
+
+		const identifiers = ['Green', 'Yellow', 'Red'];
+		const maxWidth = Math.max(...identifiers.map((elem) => canvasContext.measureText(elem).width));
+
+		const boxWidth = 180;
+		const boxHeight = 70;
+
+		const boxX = courtWidth - boxWidth;
+		const boxY = courtHeight - boxHeight;
+
+		canvasContext.fillStyle = tooltipBoxBGColor;
+		canvasContext.fillRect(boxX, boxY, boxWidth, boxHeight);
+		canvasContext.fillStyle = 'white';
+		canvasContext.font = '16px Inter, sans-serif';
+
+		for (let i = 0; i < identifiers.length; i++) {
+			let id = identifiers[i];
+			canvasContext.fillText(id, boxX + 5, boxY + 5 + (i + 1) * 18);
+		}
+
+		canvasContext.fillText('= +5% of avg', boxX + 7 + maxWidth, boxY + 23);
+		canvasContext.fillText('= +/- 5% of avg', boxX + 7 + maxWidth, boxY + 41);
+		canvasContext.fillText('= -5% of avg', boxX + 7 + maxWidth, boxY + 59);
 	};
 
 	const drawShootingZones = () => {
@@ -379,7 +483,13 @@
 
 		for (let i = 0; i < zoneRegions.length; i++) {
 			let zone = zoneRegions[i];
-			const color = getShootingColor(zone[3].percentage, zone[3].average_percentage);
+			let zoneInformation = zone[3];
+
+			const color = getShootingColor(
+				zoneInformation.percentage,
+				zoneInformation.average_percentage
+			);
+
 			canvasContext.globalAlpha = zone[1];
 			canvasContext.fillStyle = color;
 
@@ -391,9 +501,10 @@
 		}
 
 		drawCourt();
+		if (showInformation) drawHelp();
 	};
 
-	function animateShootingZones() {
+	function animateShootingZones(force: boolean = false) {
 		let redraw = false;
 
 		for (let i = 0; i < zoneRegions.length; i++) {
@@ -402,22 +513,22 @@
 
 			if (zoneOpacity !== zoneOpacityTarget) {
 				if (zoneOpacityTarget > zoneOpacity) {
-					zoneOpacity += 0.125;
-					zoneRegions[i][1] = Math.min(zoneOpacity, zoneOpacityTarget);
+					zoneRegions[i][1] = Math.min(zoneOpacity + 0.125, zoneOpacityTarget);
 				} else {
-					zoneOpacity -= 0.125;
-					zoneRegions[i][1] = Math.max(zoneOpacity, 0);
+					zoneRegions[i][1] = Math.max(zoneOpacity - 0.125, 0);
 				}
 
 				redraw = true;
 			}
 		}
 
-		if (redraw) {
+		if (redraw || force) {
 			drawShootingZones();
 
 			setTimeout(() => {
-				requestAnimationFrame(animateShootingZones);
+				requestAnimationFrame(() => {
+					animateShootingZones(false);
+				});
 			}, 40);
 		}
 	}
@@ -457,26 +568,32 @@
 				}
 			}
 
-			animateShootingZones();
+			if (!highlightZones) {
+				animateShootingZones();
+			}
 		}
 
 		drawTooltip(mouseX, mouseY);
 	};
 
 	const handleMouseEnter = () => {
-		for (let i = 0; i < zoneRegions.length; i++) {
-			zoneRegions[i][1] = 0;
+		if (highlightZones) {
+			return;
 		}
+
+		toggleRegions(0, 1);
 	};
 
 	const handleMouseExit = () => {
 		toolTipCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
-		currentRegion = -1;
 
-		for (let i = 0; i < zoneRegions.length; i++) {
-			zoneRegions[i][2] = 0;
+		if (highlightZones) {
+			return;
 		}
 
+		currentRegion = -1;
+
+		toggleRegions(0, 2);
 		animateShootingZones();
 	};
 
@@ -500,12 +617,18 @@
 		return undefined;
 	};
 
-	const getSeasonAverage = (season: number) => {
-		for (let avg of data.averages) {
+	const getAverage = (season: number) => {
+		let dataset = getDataset();
+		if (checkedDataset == 'alltime') {
+			return dataset;
+		}
+
+		for (let avg of dataset) {
 			if (avg.season == season) {
 				return avg;
 			}
 		}
+
 		return undefined;
 	};
 
@@ -514,10 +637,61 @@
 			seasons.push(season.season);
 		}
 		seasons.reverse();
+
+		if (seasons.length > 0) selectedSeason = seasons[0];
+	};
+
+	const getDataset = () => {
+		if (checkedDataset == 'season') {
+			return data.seasonAverages;
+		} else if (checkedDataset == 'alltime') {
+			return data.alltimeAverages;
+		} else {
+			return data.positionAverages;
+		}
+	};
+
+	const toggleHighlight = () => {
+		if (highlightZones) {
+			toggleRegions(1, 1);
+			toggleRegions(1, 2);
+		} else {
+			toggleRegions(0, 1);
+			toggleRegions(0, 2);
+		}
+
+		animateShootingZones(true);
+	};
+
+	const toggleRegions = (toggle: number, target: number) => {
+		for (let i = 0; i < zoneRegions.length; i++) {
+			zoneRegions[i][target] = toggle;
+		}
 	};
 </script>
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col">
+	<div class="flex flex-row justify-between pb-2">
+		<div class="filter my-auto">
+			<input id="filter-1" type="radio" value="season" bind:group={checkedDataset} />
+			<label for="filter-1" class="border rounded px-2 py-1">Season</label>
+			<input id="filter-2" type="radio" value="position" bind:group={checkedDataset} />
+			<label for="filter-2" class="border rounded px-2 py-1">Position</label>
+			<input id="filter-3" type="radio" value="alltime" bind:group={checkedDataset} />
+			<label for="filter-3" class="border rounded px-2 py-1">Alltime</label>
+		</div>
+		{#if loaded}
+			<div class="flex flex-row gap-2 dropbox border rounded pl-2">
+				<label for="seasons" class="text-md my-auto">Season:</label>
+				<select id="seasons" class="py-2 px-3 pe-2 text-sm" bind:value={selectedSeason}>
+					{#each seasons as season}
+						<option value={season}>{season}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
+	</div>
+
 	<div class="relative" style="width: {courtWidth}; height: {courtHeight};">
 		<canvas bind:this={canvas} width={courtWidth} height={courtHeight} class="z-0"> </canvas>
 		<canvas
@@ -531,23 +705,40 @@
 		>
 		</canvas>
 	</div>
-	{#if loaded}
-		<div class="flex flex-row gap-2 items-end justify-end" style="z-index:5">
-			<label for="seasons" class="text-md font-medium my-auto dark:text-white align-middle"
-				>Season:
+	<div class="pt-2">
+		<div class="flex flex-row toggle justify-between">
+			<input
+				id="checkbox-1"
+				type="checkbox"
+				bind:checked={highlightZones}
+				onchange={() => {
+					toggleHighlight();
+				}}
+			/>
+			<label for="checkbox-1" class="my-auto border rounded px-2 py-1">
+				<span class="text-xl">
+					{#if highlightZones}
+						<Fa icon={faCheck} class="inline-block pr-2" />
+					{:else}
+						<Fa icon={faX} class="inline-block pr-2" />
+					{/if}
+				</span>Highlight Zones
 			</label>
-
-			<select
-				name="seasons"
-				class="py-2 px-3 pe-2 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-				bind:value={selectedSeason}
-			>
-				{#each seasons as season}
-					<option value={season}>{season}</option>
-				{/each}
-			</select>
+			<input
+				id="checkbox-2"
+				type="checkbox"
+				bind:checked={showInformation}
+				onchange={() => {
+					animateShootingZones(true);
+				}}
+			/>
+			<label for="checkbox-2" class="my-auto border rounded px-2 py-1">
+				<span class="text-2xl">
+					<Fa icon={faInfoCircle} />
+				</span>
+			</label>
 		</div>
-	{/if}
+	</div>
 </div>
 
 <style>
@@ -559,5 +750,52 @@
 	label {
 		font-family: 'Inter', sans-serif;
 		color: white;
+	}
+
+	.filter input[type='radio']:checked + label {
+		border-bottom: 3px solid white;
+	}
+
+	.filter input[type='radio'] + label {
+		cursor: pointer;
+		display: inline-block;
+		background-color: #343436;
+	}
+
+	.filter input[type='radio'] + label:hover {
+		background-color: #707070;
+	}
+
+	.filter input[type='radio'] {
+		display: none;
+	}
+
+	.toggle input[type='checkbox'] {
+		display: none;
+	}
+
+	.toggle input[type='checkbox'] + label {
+		cursor: pointer;
+		display: inline-block;
+		background-color: #343436;
+	}
+
+	.toggle input[type='checkbox'] + label:hover {
+		background-color: #707070;
+	}
+
+	.dropbox {
+		background-color: #343436;
+		color: white;
+	}
+
+	.dropbox select {
+		font-family: 'Inter', sans-serif;
+		background-color: #343436;
+		border-left: 1px solid;
+	}
+
+	.dropbox select:focus {
+		outline: none;
 	}
 </style>

@@ -36,8 +36,10 @@
 
 	let canvas: HTMLCanvasElement;
 	let toolTipCanvas: HTMLCanvasElement;
+	let outlineCanvas: HTMLCanvasElement;
 	let canvasContext: CanvasRenderingContext2D;
 	let toolTipCanvasContext: CanvasRenderingContext2D;
+	let outlineCanvasContext: CanvasRenderingContext2D;
 
 	let seasons: number[] = [];
 
@@ -89,6 +91,7 @@
 	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
 		toolTipCanvasContext = toolTipCanvas.getContext('2d')!;
+		outlineCanvasContext = outlineCanvas.getContext('2d')!;
 
 		getAllSeasons();
 		createRegions();
@@ -354,14 +357,21 @@
 		// Draw the paint
 		canvasContext.fillStyle = paintColor;
 		canvasContext.fill(paintRegion);
+
+		outlineCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
 	};
 
 	/**
 	 * Draws the basketball court using canvas.
 	 */
 	const drawCourt = () => {
+		if (highlightZones) {
+			canvasContext.strokeStyle = 'white';
+		} else {
+			canvasContext.strokeStyle = lineColor;
+		}
+
 		// Start by drawing the three point line
-		canvasContext.strokeStyle = lineColor;
 		canvasContext.lineWidth = 4.0;
 		canvasContext.stroke(line3pArc);
 
@@ -388,8 +398,8 @@
 	const drawPlayerName = () => {
 		const playerName: string = getPlayerName();
 
-		canvasContext.font = '48px Inter, sans-serif';
-		canvasContext.fillStyle = tooltipBoxColor;
+		canvasContext.font = '52px Inter, sans-serif';
+		canvasContext.fillStyle = tooltipBoxBGColor;
 		const nameWidth = canvasContext.measureText(playerName).width;
 		const nameX = courtWidth / 2 - nameWidth / 2;
 		const nameY = 540;
@@ -404,9 +414,10 @@
 		const title = 'Zone: ' + region[3].explanation;
 		const fields = [
 			'Player: ' + region[3].player,
-			'Shooting %: ' + region[3].percentage.toFixed(2),
-			'League Average %: ' + region[3].average_percentage.toFixed(2)
+			'Shooting-%: ' + region[3].percentage.toFixed(2),
+			'NBA Avg-%: ' + region[3].average_percentage.toFixed(2)
 		];
+		const titleWidth = toolTipCanvasContext.measureText(title).width;
 		const maxWidth = Math.max(
 			...fields.map((elem) => toolTipCanvasContext.measureText(elem).width)
 		);
@@ -415,7 +426,7 @@
 		let tooltipTextOffsetX = 10;
 		let tooltipTextOffsetY = 10;
 
-		let tooltipWidth = Math.ceil(maxWidth) + 2 * tooltipTextOffsetX;
+		let tooltipWidth = Math.ceil(Math.max(maxWidth, titleWidth)) + 2 * tooltipTextOffsetX;
 		let tooltipHeight = (fields.length + 1) * fontSize + tooltipTextOffsetY * 2;
 
 		let tooltipX = mouseX - tooltipWidth / 2;
@@ -435,19 +446,21 @@
 			return;
 		}
 
+		// Draws title in the center of the tooltip box.
+		const titleX = tooltipX + (tooltipWidth / 2 - titleWidth / 2);
+
+		// Clear canvas
 		toolTipCanvasContext.clearRect(0, 0, courtWidth, courtHeight);
 
+		// Render background boxes
 		toolTipCanvasContext.fillStyle = tooltipBoxBGColor;
 		toolTipCanvasContext.fillRect(tooltipX + 2, tooltipY + 2, tooltipWidth + 3, tooltipHeight + 3);
 		toolTipCanvasContext.fillStyle = tooltipBoxColor;
 		toolTipCanvasContext.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
 
+		// Render texts
 		toolTipCanvasContext.fillStyle = 'white';
-		toolTipCanvasContext.fillText(
-			title,
-			tooltipX + tooltipTextOffsetX,
-			tooltipY + tooltipTextOffsetY * 2
-		);
+		toolTipCanvasContext.fillText(title, titleX, tooltipY + tooltipTextOffsetY * 2);
 		toolTipCanvasContext.fillRect(tooltipX + 5, tooltipY + 27, tooltipWidth - 10, 2);
 		for (let i = 0; i < fields.length; i++) {
 			toolTipCanvasContext.fillText(
@@ -508,6 +521,12 @@
 
 			for (var region of zone[0]) {
 				canvasContext.fill(region);
+
+				if (highlightZones) {
+					outlineCanvasContext.strokeStyle = 'white';
+					outlineCanvasContext.lineWidth = 4;
+					outlineCanvasContext.stroke(region);
+				}
 			}
 
 			canvasContext.globalAlpha = 1;
@@ -526,9 +545,9 @@
 
 			if (zoneOpacity !== zoneOpacityTarget) {
 				if (zoneOpacityTarget > zoneOpacity) {
-					zoneRegions[i][1] = Math.min(zoneOpacity + 0.125, zoneOpacityTarget);
+					zoneRegions[i][1] = Math.min(zoneOpacity + 0.167, zoneOpacityTarget);
 				} else {
-					zoneRegions[i][1] = Math.max(zoneOpacity - 0.125, 0);
+					zoneRegions[i][1] = Math.max(zoneOpacity - 0.167, 0);
 				}
 
 				redraw = true;
@@ -542,7 +561,7 @@
 				requestAnimationFrame(() => {
 					animateShootingZones(false);
 				});
-			}, 40);
+			}, 35);
 		}
 	}
 
@@ -715,13 +734,20 @@
 	<div class="relative" style="width: {courtWidth}; height: {courtHeight};">
 		<canvas bind:this={canvas} width={courtWidth} height={courtHeight} class="z-0"> </canvas>
 		<canvas
+			bind:this={outlineCanvas}
+			width={courtWidth}
+			height={courtHeight}
+			class="absolute top-0 left-0 z-10"
+		>
+		</canvas>
+		<canvas
 			onmouseenter={(_) => handleMouseEnter()}
 			onmousemove={(e) => handleMouse(e)}
 			onmouseleave={(_) => handleMouseExit()}
 			bind:this={toolTipCanvas}
 			width={courtWidth}
 			height={courtHeight}
-			class="absolute top-0 left-0 z-10"
+			class="absolute top-0 left-0 z-20"
 		>
 		</canvas>
 	</div>
@@ -742,7 +768,7 @@
 					{:else}
 						<Fa icon={faX} class="inline-block pr-2" />
 					{/if}
-				</span>Highlight Zones
+				</span><span class="align-text-bottom text-center">Highlight Zones</span>
 			</label>
 			<input
 				id="checkbox-2"
@@ -753,7 +779,7 @@
 				}}
 			/>
 			<label for="checkbox-2" class="my-auto border rounded px-2 py-1">
-				<span class="text-2xl">
+				<span class="text-2xl text-center align-middle">
 					<Fa icon={faInfoCircle} />
 				</span>
 			</label>

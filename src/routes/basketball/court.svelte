@@ -109,15 +109,6 @@
 		canvas.height = h;
 	};
 
-	const drawBackground = () => {
-		canvasContext.fillStyle = backgroundColor;
-		canvasContext.fillRect(0, 0, courtWidth, courtHeight);
-
-		// Draw the paint
-		canvasContext.fillStyle = paintColor;
-		canvasContext.fill(paintRegion);
-	};
-
 	const createRegions = () => {
 		freeThrowRegion = new Path2D();
 		freeThrowRegion.arc(halfCourtWidth, freeThrowHeight, 76.8, 0, Math.PI, false);
@@ -356,6 +347,15 @@
 		}
 	};
 
+	const drawBackground = () => {
+		canvasContext.fillStyle = backgroundColor;
+		canvasContext.fillRect(0, 0, courtWidth, courtHeight);
+
+		// Draw the paint
+		canvasContext.fillStyle = paintColor;
+		canvasContext.fill(paintRegion);
+	};
+
 	/**
 	 * Draws the basketball court using canvas.
 	 */
@@ -381,6 +381,19 @@
 		canvasContext.stroke(basketHoopArc);
 		canvasContext.stroke(backboardLine);
 		canvasContext.fill(backboardHoopRect);
+
+		drawPlayerName();
+	};
+
+	const drawPlayerName = () => {
+		const playerName: string = getPlayerName();
+
+		canvasContext.font = '48px Inter, sans-serif';
+		canvasContext.fillStyle = tooltipBoxColor;
+		const nameWidth = canvasContext.measureText(playerName).width;
+		const nameX = courtWidth / 2 - nameWidth / 2;
+		const nameY = 540;
+		canvasContext.fillText(playerName, nameX, nameY);
 	};
 
 	const drawTooltip = (mouseX: number, mouseY: number) => {
@@ -607,8 +620,15 @@
 		}
 	};
 
+	const getPlayerName = () => {
+		if (!data.players) {
+			return undefined;
+		}
+
+		return data.players[0].player;
+	};
+
 	const getPlayer = (season: number) => {
-		//const seasonObj = data.players.find((elem) => elem.season == season);
 		for (let player of data.players) {
 			if (player.season == season) {
 				return player;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	let { data } = $props();
 
-	const playerColumns = ['Player ID', 'Season', 'Team', 'GP', 'MP', 'PTS', 'DRB', 'ORB', 'AST'];
+	const playerColumns = ['ID', 'Season', 'Team', 'GP', 'MP', 'PTS', 'DRB', 'ORB', 'AST'];
 	const teamNamesMap = new Map<string, string>([
 		['GSW', 'Golden State Warriors'],
 		['Golden State Warriors', 'GSW']
@@ -80,7 +80,7 @@
 <div class="w-full">
 	{#if loading}
 		<table
-			class="border-collapse max-w-2xl min-w-full border border-slate-500 table-fixed md:overflow-x-scroll"
+			class="border-collapse max-w-2xl min-w-full border border-slate-500 md:table-fixed md:overflow-x-scroll"
 		>
 			<thead>
 				<tr>

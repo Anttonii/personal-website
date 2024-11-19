@@ -115,14 +115,7 @@
 
 	const handleCanvasStart = (event: UIEvent) => {
 		isDrawing = true;
-
 		let [gridX, gridY] = getPositionOnGrid(event);
-
-		// When drawing disable moving the screen
-		if (event instanceof TouchEvent) {
-			event.preventDefault();
-		}
-
 		drawCell([gridX, gridY]);
 	};
 
@@ -308,6 +301,7 @@
 			height: 336px;
 			border: 1px solid white;
 			align-self: center;
+			touch-action: none;
 		}
 
 		.expander {

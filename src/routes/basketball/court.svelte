@@ -14,6 +14,24 @@
 	// take in the shooting data to draw shooting zones.
 	let { data } = $props();
 
+	let filters = [
+		{
+			value: 'season',
+			text: 'Season',
+			tooltip: "Compare player against the seasons' average player."
+		},
+		{
+			value: 'position',
+			text: 'Position',
+			tooltip: "Compare player against the positions' average player for the given season."
+		},
+		{
+			value: 'alltime',
+			text: 'Alltime',
+			tooltip: 'Compare player against the average player of all time.'
+		}
+	];
+
 	/** The aspect ratio of a half-court.
 	 * Note that the court is slightly wider than it's long. */
 	let aspectRatio = 15 / 14.35;
@@ -707,17 +725,65 @@
 			zoneRegions[i][target] = toggle;
 		}
 	};
+
+	const addFilterTooltip = (event: MouseEvent, index: number) => {
+		let target = event.target;
+		let element = target as HTMLLabelElement;
+		let left = element.getBoundingClientRect().x;
+		let height = element.getBoundingClientRect().y - 40;
+
+		let tooltipText = document.createElement('p');
+		let newDivElement = document.createElement('div');
+
+		tooltipText.classList.add('courtTooltipText');
+		tooltipText.classList.add('text-md');
+		tooltipText.textContent = filters[index].tooltip;
+
+		newDivElement.classList.add('courtTooltip');
+		newDivElement.classList.add('border');
+		newDivElement.classList.add('rounded');
+		newDivElement.classList.add('px-1');
+		newDivElement.classList.add('py-1');
+		newDivElement.style.left = left + 'px';
+		newDivElement.style.top = height + 'px';
+		newDivElement.appendChild(tooltipText);
+
+		element.after(newDivElement);
+	};
+
+	const removeFilterTooltip = (event: MouseEvent) => {
+		let target = event.target;
+		let element = target as HTMLLabelElement;
+		let parent = element.parentNode!;
+
+		let div = element.nextSibling;
+		if (div) {
+			parent.removeChild(div);
+		}
+	};
 </script>
 
 <div class="flex flex-col">
 	<div class="flex flex-row justify-between pb-2">
 		<div class="filter my-auto">
-			<input id="filter-1" type="radio" value="season" bind:group={checkedDataset} />
-			<label for="filter-1" class="border rounded px-2 py-1">Season</label>
-			<input id="filter-2" type="radio" value="position" bind:group={checkedDataset} />
-			<label for="filter-2" class="border rounded px-2 py-1">Position</label>
-			<input id="filter-3" type="radio" value="alltime" bind:group={checkedDataset} />
-			<label for="filter-3" class="border rounded px-2 py-1">Alltime</label>
+			{#each filters as filter, i}
+				<input
+					id={'filter-' + i + 1}
+					type="radio"
+					value={filter.value}
+					bind:group={checkedDataset}
+				/>
+				<label
+					for={'filter-' + i + 1}
+					class="border rounded px-2 py-1"
+					onmouseenter={(e) => {
+						addFilterTooltip(e, i);
+					}}
+					onmouseleave={(e) => {
+						removeFilterTooltip(e);
+					}}>{filter.text}</label
+				>
+			{/each}
 		</div>
 		{#if loaded}
 			<div class="flex flex-row gap-2 dropbox border rounded pl-2">
@@ -843,5 +909,16 @@
 
 	.dropbox select:focus {
 		outline: none;
+	}
+
+	:global(.courtTooltip) {
+		position: absolute;
+		background-color: #202020a0;
+		z-index: 99;
+	}
+
+	:global(.courtTooltipText) {
+		color: white;
+		font-family: 'Inter', sans-serif;
 	}
 </style>

@@ -181,114 +181,116 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<div class="container mx-auto flex flex-col justify-center items-center">
-	<div class="flex flex-col justify-start md:justify-center align-middle gap-8 h-full text-white">
-		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
-			<a href="/">Anttoni Koivu</a>
-		</h2>
-		<h3 class="font-bold text-base md:text-xl text-center tracking-wider">Neural Network!</h3>
-		<div class="flex flex-col mx-h-90 gap-4">
-			<div class="flex flex-col justify-center expander">
-				<button
-					class="expander border border-white flex flex-row justify-between py-2 px-2 m-auto"
-					onclick={toggleInstructions}
-				>
-					<h4 class="text-sm md:text-lg">Instructions</h4>
-					<span
-						class="expander-icon triangle inline-flex align-baseline ml-2 mt-1"
-						bind:this={expanderIcon}
-					></span>
-				</button>
-				{#if instructionsExpanded}
-					<div class="expander ps-4" transition:slide={{ duration: 1000 }}>
-						<p class="text-xs md:text-sm tracking-tight pt-4">
-							Start by drawing an image of any number between 0 and 9. Press guess to see if the
-							neural network is correct at predicting what number you've drawn. If you want to start
-							over the drawing process, just press clear to clear the canvas.<br /><br />
+<div class="w-full h-full flex">
+	<div class="w-full mx-auto flex flex-col justify-center items-center">
+		<div class="flex flex-col justify-start md:justify-center align-middle gap-8 h-full text-white">
+			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">
+				<a href="/">Anttoni Koivu</a>
+			</h2>
+			<h3 class="font-bold text-base md:text-xl text-center tracking-wider">Neural Network!</h3>
+			<div class="flex flex-col mx-h-90 gap-4">
+				<div class="flex flex-col justify-center expander">
+					<button
+						class="expander border border-white flex flex-row justify-between py-2 px-2 m-auto"
+						onclick={toggleInstructions}
+					>
+						<h4 class="text-sm md:text-lg">Instructions</h4>
+						<span
+							class="expander-icon triangle inline-flex align-baseline ml-2 mt-1"
+							bind:this={expanderIcon}
+						></span>
+					</button>
+					{#if instructionsExpanded}
+						<div class="expander ps-4" transition:slide={{ duration: 1000 }}>
+							<p class="text-xs md:text-sm tracking-tight pt-4">
+								Start by drawing an image of any number between 0 and 9. Press guess to see if the
+								neural network is correct at predicting what number you've drawn. If you want to
+								start over the drawing process, just press clear to clear the canvas.<br /><br />
 
-							Simple NN uses a simpler model than convolutional NN and thus is a little bit less
-							accurate, try to see if you can find differences in their guessing.<br /><br />
-							<span class="text-center md:text-left">Happy experimenting!</span>
-						</p>
+								Simple NN uses a simpler model than convolutional NN and thus is a little bit less
+								accurate, try to see if you can find differences in their guessing.<br /><br />
+								<span class="text-center md:text-left">Happy experimenting!</span>
+							</p>
+						</div>
+					{/if}
+				</div>
+
+				<div class="flex flex-row expander gap-4 justify-center">
+					<div class="flex items-center ps-4 gap-2">
+						<input
+							id="bordered-radio-1"
+							type="radio"
+							value=""
+							name="bordered-radio"
+							class="w-4 h-4"
+							onclick={() => {
+								method = 0;
+							}}
+						/>
+						<label for="bordered-radio-1" class="w-full py-4 ms-2 text-sm">Simple NN</label>
 					</div>
-				{/if}
-			</div>
-
-			<div class="flex flex-row expander gap-4 justify-center">
-				<div class="flex items-center ps-4 gap-2">
-					<input
-						id="bordered-radio-1"
-						type="radio"
-						value=""
-						name="bordered-radio"
-						class="w-4 h-4"
-						onclick={() => {
-							method = 0;
-						}}
-					/>
-					<label for="bordered-radio-1" class="w-full py-4 ms-2 text-sm">Simple NN</label>
+					<div class="flex items-center ps-4 gap-2">
+						<input
+							checked
+							id="bordered-radio-2"
+							type="radio"
+							value=""
+							name="bordered-radio"
+							class="w-4 h-4"
+							onclick={() => {
+								method = 1;
+							}}
+						/>
+						<label for="bordered-radio-2" class="w-full py-4 ms-2 text-sm">Convolutional NN</label>
+					</div>
 				</div>
-				<div class="flex items-center ps-4 gap-2">
-					<input
-						checked
-						id="bordered-radio-2"
-						type="radio"
-						value=""
-						name="bordered-radio"
-						class="w-4 h-4"
-						onclick={() => {
-							method = 1;
-						}}
-					/>
-					<label for="bordered-radio-2" class="w-full py-4 ms-2 text-sm">Convolutional NN</label>
-				</div>
-			</div>
 
-			<div class="flex flex-col justify-center gap-8">
-				<canvas
-					class="canvas"
-					width={currCanvasSize}
-					height={currCanvasSize}
-					bind:this={canvas}
-					onmousedown={handleCanvasStart}
-					onmouseup={handleCanvasEnd}
-					onmousemove={handleCanvasMove}
-					onmouseleave={handleCanvasEnd}
-					ontouchstart={handleCanvasStart}
-					ontouchend={handleCanvasEnd}
-					ontouchmove={handleCanvasMove}
-				></canvas>
-				<div class="flex flex-row justify-center gap-8">
-					<button
-						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-						onclick={postGrid}
-					>
-						Guess
-					</button>
-					<button
-						class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-						onclick={clearGrid}
-					>
-						Clear
-					</button>
+				<div class="flex flex-col justify-center gap-8">
+					<canvas
+						class="canvas"
+						width={currCanvasSize}
+						height={currCanvasSize}
+						bind:this={canvas}
+						onmousedown={handleCanvasStart}
+						onmouseup={handleCanvasEnd}
+						onmousemove={handleCanvasMove}
+						onmouseleave={handleCanvasEnd}
+						ontouchstart={handleCanvasStart}
+						ontouchend={handleCanvasEnd}
+						ontouchmove={handleCanvasMove}
+					></canvas>
+					<div class="flex flex-row justify-center gap-8">
+						<button
+							class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+							onclick={postGrid}
+						>
+							Guess
+						</button>
+						<button
+							class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+							onclick={clearGrid}
+						>
+							Clear
+						</button>
+					</div>
 				</div>
-			</div>
 
-			<div class="flex flex-col gap-4 text-white mx-auto expander ps-4" id="results">
-				<h3 class="pt-4 text-sm md:text-xl">Results</h3>
-				{#if prediction}
-					<div class="text-left gap-4 text-white expander mx-auto">
+				<div class="flex flex-col gap-4 text-white mx-auto expander ps-4" id="results">
+					<h3 class="pt-4 text-sm md:text-xl">Results</h3>
+					{#if prediction}
+						<div class="text-left gap-4 text-white expander mx-auto">
+							<h2 class="text-xs md:text-sm">
+								The neural network predicted that you drew: {prediction} with confidence of: {confidence}
+								<br /><br />
+								Did it get it right? :)
+							</h2>
+						</div>
+					{:else}
 						<h2 class="text-xs md:text-sm">
-							The neural network predicted that you drew: {prediction} with confidence of: {confidence}
-							<br /><br />
-							Did it get it right? :)
+							Results will appear here once a guess has been sent to the neural network!
 						</h2>
-					</div>
-				{:else}
-					<h2 class="text-xs md:text-sm">
-						Results will appear here once a guess has been sent to the neural network!
-					</h2>
-				{/if}
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>

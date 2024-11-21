@@ -1,11 +1,37 @@
 <script lang="ts">
-	let { data } = $props();
+	let { playerData, teamsData } = $props();
 
-	const playerColumns = ['ID', 'Season', 'Team', 'GP', 'MP', 'PTS', 'DRB', 'ORB', 'AST'];
-	const teamNamesMap = new Map<string, string>([
-		['GSW', 'Golden State Warriors'],
-		['Golden State Warriors', 'GSW']
-	]);
+	const tableColumns = [
+		{
+			text: 'ID'
+		},
+		{
+			text: 'Season'
+		},
+		{
+			text: 'Team',
+			width: '200'
+		},
+		{
+			text: 'GP'
+		},
+		{
+			text: 'MP'
+		},
+		{
+			text: 'PTS'
+		},
+		{
+			text: 'DRB'
+		},
+		{
+			text: 'ORB'
+		},
+		{
+			text: 'AST'
+		}
+	];
+	const teamNamesMap = new Map<string, string>();
 
 	let innerWidth: number = $state(0);
 	let innerHeight: number = $state(0);
@@ -17,8 +43,13 @@
 	let loading: boolean = $state(false);
 
 	$effect(() => {
+		for (var mapping of teamsData) {
+			teamNamesMap.set(mapping.abbreviation, mapping.teamName);
+			teamNamesMap.set(mapping.teamName, mapping.abbreviation);
+		}
+
 		let temp: string[] = [];
-		for (const season of data.players) {
+		for (const season of playerData) {
 			temp.push(namesShortened ? season.tm : teamNamesMap.get(season.tm) || '');
 		}
 		teamNames = temp;
@@ -77,35 +108,35 @@
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class="w-full">
+<div class="table-container">
 	{#if loading}
-		<table
-			class="border-collapse max-w-2xl min-w-full border border-slate-500 md:table-fixed md:overflow-x-scroll"
-		>
+		<table class="border-collapse table-shadow">
 			<thead>
 				<tr>
-					{#each playerColumns as column, i}
+					{#each tableColumns as column, i}
 						<th
 							scope="row"
 							onmouseenter={(e) => toggleHighlight(e, i, true)}
 							onmouseleave={(e) => toggleHighlight(e, i, false)}
-							class="border border-slate-600">{column}</th
+							style={column.width ? 'width: ' + column.width + 'px;' : ''}
 						>
+							{column.text}
+						</th>
 					{/each}
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.players as playerData, i}
+				{#each playerData as player, i}
 					<tr class="data-table">
-						<td class="border border-slate-700">{playerData.player_id}</td>
-						<td class="border border-slate-700">{getSeason(playerData.season)}</td>
-						<td class="border border-slate-700">{teamNames[i]}</td>
-						<td class="border border-slate-700">{playerData.g}</td>
-						<td class="border border-slate-700">{playerData.mp}</td>
-						<td class="border border-slate-700">{playerData.pts}</td>
-						<td class="border border-slate-700">{playerData.drb}</td>
-						<td class="border border-slate-700">{playerData.orb}</td>
-						<td class="border border-slate-700">{playerData.ast}</td>
+						<td class="">{player.player_id}</td>
+						<td class="">{getSeason(player.season)}</td>
+						<td class="">{teamNames[i]}</td>
+						<td class="text-right">{player.g}</td>
+						<td class="text-right">{player.mp}</td>
+						<td class="text-right">{player.pts}</td>
+						<td class="text-right">{player.drb}</td>
+						<td class="text-right">{player.orb}</td>
+						<td class="text-right">{player.ast}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -115,9 +146,43 @@
 
 <style>
 	table {
+		background-color: #313131;
+		table-layout: fixed;
+		min-width: 100%;
+	}
+
+	.table-container {
 		color: white;
 		font-family: 'Inter', sans-serif;
-		background-color: #313131;
+		width: 100%;
+	}
+
+	.table-shadow {
+		box-shadow: 2px 2px 2px black;
+	}
+
+	tr {
+		height: 36px;
+	}
+
+	table td {
+		padding: 4px 6px;
+	}
+
+	table th {
+		padding: 4px 6px;
+	}
+
+	th:nth-child(-n + 3) {
+		text-align: left;
+	}
+
+	th {
+		text-align: right;
+	}
+
+	thead {
+		border-bottom: 1px black;
 	}
 
 	.data-table:nth-child(even) {

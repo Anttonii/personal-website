@@ -72,236 +72,244 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<div class="container mx-auto flex flex-col justify-center items-center">
-	<div
-		class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white"
-		id="main-transition"
-	>
-		<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
-		<nav>
-			<ul bind:this={list} class="flex flex-col gap-4 justify-center">
-				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(0)} class="pb-4"
-						><a download="AnttoniKoivuResume.pdf" target="_blank" href={Resume}
-							>Resume<span class="text-md inline-flex pl-2">
-								<Fa icon={faUpRightFromSquare} />
-							</span>
-						</a></button
-					>
-				</li>
-				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<span bind:this={triangle} class="triangle"></span>
-					<span bind:this={outerTriangle} class="outertriangle"></span>
+<div class="w-full h-full flex">
+	<div class="w-full mx-auto flex flex-col justify-center items-center">
+		<div
+			class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white"
+			id="main-transition"
+		>
+			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
+			<nav>
+				<ul bind:this={list} class="flex flex-col gap-4 justify-center">
+					<li class="justify-start underline centering md:mx-auto flex text-xl">
+						<button on:mouseenter={() => moveTriangle(0)} class="pb-4"
+							><a download="AnttoniKoivuResume.pdf" target="_blank" href={Resume}
+								>Resume<span class="text-md inline-flex pl-2">
+									<Fa icon={faUpRightFromSquare} />
+								</span>
+							</a></button
+						>
+					</li>
+					<li class="justify-start underline centering md:mx-auto flex text-xl">
+						<span bind:this={triangle} class="triangle"></span>
+						<span bind:this={outerTriangle} class="outertriangle"></span>
 
-					<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(0)}
-						>About Me</button
-					>
-				</li>
-				<div class="m-auto">
-					{#if expanded[0]}
-						<div
-							transition:slide={{ duration: 1000 }}
-							class="transition-div items-start"
-							bind:this={expandedDivs[0]}
+						<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(0)}
+							>About Me</button
 						>
-							<p class="content text-sm tracking-tight">
-								Hi! I'm a 25 year old software developer located in Finland. I enjoy building
-								software and solving problems. I'm especially interested in everything data related
-								and am currently studying Machine Learning and Data Science.
-								<br />
-								<br />
-								I am also passionate about basketball, weightlifting and video games.
-							</p>
-						</div>
-					{/if}
-				</div>
-				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(1)}
-						>Projects</button
-					>
-				</li>
-				<div class="m-auto">
-					{#if expanded[1]}
-						<div
-							transition:slide={{ duration: 1000 }}
-							class="transition-div items-start"
-							bind:this={expandedDivs[1]}
+					</li>
+					<div class="m-auto">
+						{#if expanded[0]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start"
+								bind:this={expandedDivs[0]}
+							>
+								<p class="content text-sm tracking-tight">
+									Hi! I'm a 25 year old software developer located in Finland. I enjoy building
+									software and solving problems. I'm especially interested in everything data
+									related and am currently studying Machine Learning and Data Science.
+									<br />
+									<br />
+									I am also passionate about basketball, weightlifting and video games.
+								</p>
+							</div>
+						{/if}
+					</div>
+					<li class="justify-start underline centering md:mx-auto flex text-xl">
+						<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(1)}
+							>Projects</button
 						>
-							<div class="content">
-								<h2 class="pb-3">
-									<a
-										href="https://github.com/Anttonii/archimago-bot"
-										class="link-text"
-										target="_blank"
-										>Archimago<span class="text-md inline-flex align-baseline pl-2">
-											<Fa icon={faUpRightFromSquare} />
-										</span></a
-									>
-								</h2>
-								<p class="text-sm tracking-tight">
-									A discord chat bot that provides data and images of Sorcery TCG. Built for the
-									Sorcery TCG Finland discord group.
-								</p>
-							</div>
-							<div class="divider"></div>
-							<div class="content">
-								<h2 class="pb-3">
-									<a href="/neural" class="link-text">
-										Neural Network<span class="text-md inline-flex align-baseline pl-2">
-											<Fa icon={faUpRightFromSquare} />
-										</span>
-									</a>
-								</h2>
-								<p class="text-sm tracking-tight">
-									A neural network built on the backend that guesses which number is drawn onto the
-									grid.
-								</p>
-							</div>
-							<div class="divider"></div>
-							<div class="content">
-								<h2 class="pb-3">
-									<a
-										href="https://github.com/Anttonii/barbell-tracking"
-										class="link-text"
-										target="_blank"
-									>
-										Barbell Tracking<span class="text-md inline-flex align-baseline pl-2">
-											<Fa icon={faUpRightFromSquare} />
-										</span>
-									</a>
-								</h2>
-								<p class="text-sm tracking-tight">
-									Tracks movement of barbell from a video file and produces plots of data such as
-									bar speed and deviation from y-axis. Designed to track the movement pattern in
-									movements like squat, bench press and deadlift. Currently work-in-progress.
-								</p>
-							</div>
-							<div class="divider"></div>
-							<div class="content">
-								<h2 class="pb-3">
-									<a href="https://github.com/Anttonii/suikagame" class="link-text" target="_blank"
-										>Suikagame<span class="text-md inline-flex pl-2">
-											<Fa icon={faUpRightFromSquare} />
-										</span>
-									</a>
-								</h2>
-								<p class="text-sm tracking-tight">
-									An implementation of a popular Japanese arcade game written in C++ using SDL2 and
-									Box2D.
-								</p>
-							</div>
-							<div class="divider"></div>
-							<div class="content">
-								<h2 class="pb-3">
-									<a href="/games" class="link-text"
-										>Web Games<span class="text-md inline-flex align-baseline pl-2">
-											<Fa icon={faUpRightFromSquare} />
-										</span>
-									</a>
-								</h2>
-								<p class="text-sm tracking-tight">
-									Small web browser games implemented with three.js and svelte.
-								</p>
-							</div>
-						</div>
-					{/if}
-				</div>
-				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(2)}
-						>Education</button
-					>
-				</li>
-				<div class="m-auto">
-					{#if expanded[2]}
-						<div
-							transition:slide={{ duration: 1000 }}
-							class="transition-div items-start"
-							bind:this={expandedDivs[2]}
-						>
-							<div class="content">
-								<h2>Masters of Computer Science</h2>
-								<div class="flex flex-wrap">
-									<div class="w-full basis-1/3 md:basis-2/3">
-										<h4 class="pt-1 relative">Aalto</h4>
-									</div>
-									<div class="w-full basis-2/3 md:basis-1/3">
-										<h4 class="pt-1 relative">2024 - 2026</h4>
-									</div>
+					</li>
+					<div class="m-auto">
+						{#if expanded[1]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start"
+								bind:this={expandedDivs[1]}
+							>
+								<div class="content">
+									<h2 class="pb-3">
+										<a
+											href="https://github.com/Anttonii/archimago-bot"
+											class="link-text"
+											target="_blank"
+											>Archimago<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span></a
+										>
+									</h2>
+									<p class="text-sm tracking-tight">
+										A discord chat bot that provides data and images of Sorcery TCG. Built for the
+										Sorcery TCG Finland discord group.
+									</p>
 								</div>
-								<p class="text-sm pt-2 tracking-tight">
-									- Currently enrolled to study Machine Learning, Data Science and Artificial
-									Intelligence as a masters major in Aalto. <br />
-								</p>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										<a href="/neural" class="link-text">
+											Neural Network<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										A neural network built on the backend that guesses which number is drawn onto
+										the grid.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										<a
+											href="https://github.com/Anttonii/barbell-tracking"
+											class="link-text"
+											target="_blank"
+										>
+											Barbell Tracking<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										Tracks movement of barbell from a video file and produces plots of data such as
+										bar speed and deviation from y-axis. Designed to track the movement pattern in
+										movements like squat, bench press and deadlift. Currently work-in-progress.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										<a
+											href="https://github.com/Anttonii/suikagame"
+											class="link-text"
+											target="_blank"
+											>Suikagame<span class="text-md inline-flex pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										An implementation of a popular Japanese arcade game written in C++ using SDL2
+										and Box2D.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										<a href="/games" class="link-text"
+											>Web Games<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										Small web browser games implemented with three.js and svelte.
+									</p>
+								</div>
+							</div>
+						{/if}
+					</div>
+					<li class="justify-start underline centering md:mx-auto flex text-xl">
+						<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(2)}
+							>Education</button
+						>
+					</li>
+					<div class="m-auto">
+						{#if expanded[2]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start"
+								bind:this={expandedDivs[2]}
+							>
+								<div class="content">
+									<h2>Masters of Computer Science</h2>
+									<div class="flex flex-wrap">
+										<div class="w-full basis-1/3 md:basis-2/3">
+											<h4 class="pt-1 relative">Aalto</h4>
+										</div>
+										<div class="w-full basis-2/3 md:basis-1/3">
+											<h4 class="pt-1 relative">2024 - 2026</h4>
+										</div>
+									</div>
+									<p class="text-sm pt-2 tracking-tight">
+										- Currently enrolled to study Machine Learning, Data Science and Artificial
+										Intelligence as a masters major in Aalto. <br />
+									</p>
 
-								<div class="divider pt-4"></div>
+									<div class="divider pt-4"></div>
 
-								<h2 class="pt-4">Bachelors of Computer Science</h2>
-								<div class="flex flex-wrap">
-									<div class="w-full basis-1/3 md:basis-2/3">
-										<h4 class="pt-1 relative">Aalto</h4>
+									<h2 class="pt-4">Bachelors of Computer Science</h2>
+									<div class="flex flex-wrap">
+										<div class="w-full basis-1/3 md:basis-2/3">
+											<h4 class="pt-1 relative">Aalto</h4>
+										</div>
+										<div class="w-full basis-2/3 md:basis-1/3">
+											<h4 class="pt-1 relative">2021 - 2024</h4>
+										</div>
 									</div>
-									<div class="w-full basis-2/3 md:basis-1/3">
-										<h4 class="pt-1 relative">2021 - 2024</h4>
-									</div>
+									<p class="text-sm pt-2 tracking-tight">
+										- Wrote my Bachelors thesis about 3SUM and subset sum problems. <br />
+										- Minor in Bioinformation Technology.
+									</p>
 								</div>
-								<p class="text-sm pt-2 tracking-tight">
-									- Wrote my Bachelors thesis about 3SUM and subset sum problems. <br />
-									- Minor in Bioinformation Technology.
-								</p>
 							</div>
-						</div>
-					{/if}
-				</div>
-				<li class="justify-start underline centering md:mx-auto flex text-xl">
-					<button on:mouseenter={() => moveTriangle(4)} on:click={() => onButtonClick(3)} class=""
-						>Contact</button
-					>
-				</li>
-				<div class="m-auto pb-4">
-					{#if expanded[3]}
-						<div
-							transition:slide={{ duration: 1000 }}
-							class="transition-div items-start"
-							bind:this={expandedDivs[3]}
+						{/if}
+					</div>
+					<li class="justify-start underline centering md:mx-auto flex text-xl">
+						<button on:mouseenter={() => moveTriangle(4)} on:click={() => onButtonClick(3)} class=""
+							>Contact</button
 						>
-							<div class="flex md:flex-row flex-wrap">
-								<div class="flex contact-item align-middle justify-center contact-icon">
-									<span class="text-3xl">
-										<Fa icon={faLinkedin} />
-									</span>
-									<a
-										href="https://www.linkedin.com/in/anttoni-koivu-a55070230/"
-										target="_blank"
-										class="pt-1 pl-2 underline"
-										>Anttoni Koivu
-									</a>
-								</div>
-								<div class="flex contact-item align-middle justify-center contact-icon">
-									<span class="text-3xl">
-										<Fa icon={faGithub} />
-									</span>
-									<a href="https://github.com/Anttonii" target="_blank" class="pt-1 pl-2 underline"
-										>Anttonii
-									</a>
-								</div>
-								<div class="flex contact-item align-middle justify-center contact-icon">
-									<span class="text-3xl">
-										<Fa icon={faDiscord} />
-									</span>
-									<span class="pt-1 pl-2">Anttonii</span>
-								</div>
-								<div class="flex contact-item align-middle justify-center contact-icon">
-									<span class="text-3xl">
-										<Fa icon={faTelegram} />
-									</span>
-									<span class="pt-1 pl-2"> Anttoniii </span>
+					</li>
+					<div class="m-auto pb-4">
+						{#if expanded[3]}
+							<div
+								transition:slide={{ duration: 1000 }}
+								class="transition-div items-start"
+								bind:this={expandedDivs[3]}
+							>
+								<div class="flex md:flex-row flex-wrap">
+									<div class="flex contact-item align-middle justify-center contact-icon">
+										<span class="text-3xl">
+											<Fa icon={faLinkedin} />
+										</span>
+										<a
+											href="https://www.linkedin.com/in/anttoni-koivu-a55070230/"
+											target="_blank"
+											class="pt-1 pl-2 underline"
+											>Anttoni Koivu
+										</a>
+									</div>
+									<div class="flex contact-item align-middle justify-center contact-icon">
+										<span class="text-3xl">
+											<Fa icon={faGithub} />
+										</span>
+										<a
+											href="https://github.com/Anttonii"
+											target="_blank"
+											class="pt-1 pl-2 underline"
+											>Anttonii
+										</a>
+									</div>
+									<div class="flex contact-item align-middle justify-center contact-icon">
+										<span class="text-3xl">
+											<Fa icon={faDiscord} />
+										</span>
+										<span class="pt-1 pl-2">Anttonii</span>
+									</div>
+									<div class="flex contact-item align-middle justify-center contact-icon">
+										<span class="text-3xl">
+											<Fa icon={faTelegram} />
+										</span>
+										<span class="pt-1 pl-2"> Anttoniii </span>
+									</div>
 								</div>
 							</div>
-						</div>
-					{/if}
-				</div>
-			</ul>
-		</nav>
+						{/if}
+					</div>
+				</ul>
+			</nav>
+		</div>
 	</div>
 </div>
 

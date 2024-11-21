@@ -3,6 +3,8 @@
 	import { faX, faCheck, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
 
+	let { player, seasonAverages, alltimeAverages, positionAverages, teamMappings } = $props();
+
 	interface ShootingZone {
 		zone: string;
 		player: string;
@@ -11,24 +13,21 @@
 		average_percentage: number;
 	}
 
-	// take in the shooting data to draw shooting zones.
-	let { data } = $props();
-
-	let filters = [
+	const filters = [
 		{
 			value: 'season',
 			text: 'Season',
-			tooltip: "Compare player against the seasons' average player."
+			tooltip: "Compare current player against the given seasons' average player."
 		},
 		{
 			value: 'position',
 			text: 'Position',
-			tooltip: "Compare player against the positions' average player for the given season."
+			tooltip: "Compare current player against the positions' average player for the given season."
 		},
 		{
 			value: 'alltime',
 			text: 'Alltime',
-			tooltip: 'Compare player against the average player of all time.'
+			tooltip: 'Compare current player against the average player of all time.'
 		}
 	];
 
@@ -36,7 +35,7 @@
 	 * Note that the court is slightly wider than it's long. */
 	let aspectRatio = 15 / 14.35;
 
-	// measure in pixels
+	// Measured in pixels
 	let courtHeight = 640;
 	let courtWidth = Math.ceil(aspectRatio * courtHeight);
 	let halfCourtWidth = courtWidth / 2;
@@ -63,13 +62,23 @@
 
 	/** The background color or the color of the floor of the court. */
 	let backgroundColor = 'rgb(255 204 153)';
+
 	/** Basket color defines the color of the basket and the backboard. */
 	let basketColor = '#000000D0';
+
 	/** Paint color defines the color of the 'paint' area
-	 *  being the are between the basket and the free throw line.*/
+	 *  being the are between the basket and the free throw line.
+	 *
+	 * 	This is a default value, paint color will be changed to the secondary color.
+	 * */
 	let paintColor = 'rgb(255 215 0)';
-	/** Line color defines which color is used for drawing the 3p line,
-	 * free throw line and the paints boundaries. */
+	/**
+	 * Line color defines which color is used for drawing the 3p line,
+	 * free throw line and the paints boundaries.
+	 *
+	 * This is a default value, line color will be changed to the teams primary
+	 * color.
+	 * */
 	let lineColor = 'rgb(0 0 153)';
 
 	let goodShooterColor = '#03C04A';
@@ -112,6 +121,7 @@
 		outlineCanvasContext = outlineCanvas.getContext('2d')!;
 
 		getAllSeasons();
+		getColors();
 		createRegions();
 		drawBackground();
 		drawCourt();
@@ -121,14 +131,10 @@
 	});
 
 	$effect(() => {
+		getColors();
 		updateShootingZones();
 		requestAnimationFrame(drawShootingZones);
 	});
-
-	const updateCanvasSize = (w: number, h: number) => {
-		canvas.width = w;
-		canvas.height = h;
-	};
 
 	const createRegions = () => {
 		freeThrowRegion = new Path2D();
@@ -341,30 +347,40 @@
 			return;
 		}
 
+		const player = getPlayer(season);
 		const average = getAverage(season);
-		if (!average) {
+		if (!player || !average) {
 			return;
 		}
 
 		for (let i = 0; i < zoneRegions.length; i++) {
 			let zone = zoneRegions[i][3].zone;
-			let value = 0;
+
+			let newPlayer = 0;
+			let newAvg = 0;
 
 			if (zone == 'ft') {
-				value = average.ft_percent;
+				newPlayer = player.ft_percent;
+				newAvg = average.ft_percent;
 			} else if (zone == 'ct') {
-				value = average.corner_3_point_percent;
+				newPlayer = player.corner_3_point_percent;
+				newAvg = average.corner_3_point_percent;
 			} else if (zone == 'tp') {
-				value = average.x3p_percent;
+				newPlayer = player.x3p_percent;
+				newAvg = average.x3p_percent;
 			} else if (zone == 'lt') {
-				value = average.fg_percent_from_x16_3p_range;
+				newPlayer = player.fg_percent_from_x16_3p_range;
+				newAvg = average.fg_percent_from_x16_3p_range;
 			} else if (zone == 'mrt') {
-				value = average.fg_percent_from_x10_16_range;
+				newPlayer = player.fg_percent_from_x10_16_range;
+				newAvg = average.fg_percent_from_x10_16_range;
 			} else if (zone == 'utr') {
-				value = average.fg_percent_from_x0_3_range;
+				newPlayer = player.fg_percent_from_x0_3_range;
+				newAvg = average.fg_percent_from_x0_3_range;
 			}
 
-			zoneRegions[i][3].average_percentage = value;
+			zoneRegions[i][3].percentage = newPlayer;
+			zoneRegions[i][3].average_percentage = newAvg;
 		}
 	};
 
@@ -417,7 +433,11 @@
 		const playerName: string = getPlayerName();
 
 		canvasContext.font = '52px Inter, sans-serif';
-		canvasContext.fillStyle = tooltipBoxBGColor;
+		if (highlightZones) {
+			canvasContext.fillStyle = 'black';
+		} else {
+			canvasContext.fillStyle = tooltipBoxBGColor;
+		}
 		const nameWidth = canvasContext.measureText(playerName).width;
 		const nameX = courtWidth / 2 - nameWidth / 2;
 		const nameY = 540;
@@ -432,8 +452,8 @@
 		const title = 'Zone: ' + region[3].explanation;
 		const fields = [
 			'Player: ' + region[3].player,
-			'Shooting-%: ' + region[3].percentage.toFixed(2),
-			'NBA Avg-%: ' + region[3].average_percentage.toFixed(2)
+			'Shooting-%: ' + (region[3].percentage * 100).toFixed(1),
+			'NBA Avg-%: ' + (region[3].average_percentage * 100).toFixed(1)
 		];
 		const titleWidth = toolTipCanvasContext.measureText(title).width;
 		const maxWidth = Math.max(
@@ -525,8 +545,16 @@
 			return;
 		}
 
-		for (let i = 0; i < zoneRegions.length; i++) {
-			let zone = zoneRegions[i];
+		// Render regions in reverse order when zones are highlighted.
+		// This allows corner 3s and free throws to be rendered on top instead
+		// of being drawn below overlapping regions.
+		let regions = [...zoneRegions];
+		if (highlightZones) {
+			regions.reverse();
+		}
+
+		for (let i = 0; i < regions.length; i++) {
+			let zone = regions[i];
 			let zoneInformation = zone[3];
 
 			const color = getShootingColor(
@@ -658,17 +686,17 @@
 	};
 
 	const getPlayerName = () => {
-		if (!data.players) {
+		if (!player) {
 			return undefined;
 		}
 
-		return data.players[0].player;
+		return player[0].player;
 	};
 
 	const getPlayer = (season: number) => {
-		for (let player of data.players) {
-			if (player.season == season) {
-				return player;
+		for (let playerData of player) {
+			if (playerData.season == season) {
+				return playerData;
 			}
 		}
 		return undefined;
@@ -690,7 +718,11 @@
 	};
 
 	const getAllSeasons = () => {
-		for (var season of data.players) {
+		if (!player) {
+			return;
+		}
+
+		for (var season of player) {
 			seasons.push(season.season);
 		}
 		seasons.reverse();
@@ -698,13 +730,38 @@
 		if (seasons.length > 0) selectedSeason = seasons[0];
 	};
 
+	/**
+	 * Updates colors such that the line color and paint color are chosen
+	 * as the primary and secondary colors of the team that the player
+	 * is currently playing for.
+	 */
+	const getColors = () => {
+		const season = selectedSeason ? (selectedSeason as number) : -1;
+		if (season == -1) {
+			return;
+		}
+
+		const player = getPlayer(season);
+		if (!player) {
+			return;
+		}
+
+		const team = player.tm;
+		for (var mapping of teamMappings) {
+			if (mapping.abbreviation == team) {
+				lineColor = mapping.primaryColor;
+				paintColor = mapping.secondaryColor;
+			}
+		}
+	};
+
 	const getDataset = () => {
 		if (checkedDataset == 'season') {
-			return data.seasonAverages;
+			return seasonAverages;
 		} else if (checkedDataset == 'alltime') {
-			return data.alltimeAverages;
+			return alltimeAverages;
 		} else {
-			return data.positionAverages;
+			return positionAverages;
 		}
 	};
 
@@ -788,7 +845,7 @@
 		{#if loaded}
 			<div class="flex flex-row gap-2 dropbox border rounded pl-2">
 				<label for="seasons" class="text-md my-auto">Season:</label>
-				<select id="seasons" class="py-2 px-3 pe-2 text-sm" bind:value={selectedSeason}>
+				<select id="seasons" class="py-2 px-2 pe-2 text-sm" bind:value={selectedSeason}>
 					{#each seasons as season}
 						<option value={season}>{season}</option>
 					{/each}
@@ -872,6 +929,13 @@
 		cursor: pointer;
 		display: inline-block;
 		background-color: #343436;
+		-webkit-touch-callout: none; /* iOS Safari */
+		-webkit-user-select: none; /* Safari */
+		-khtml-user-select: none; /* Konqueror HTML */
+		-moz-user-select: none; /* Old versions of Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+		user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 	}
 
 	.filter input[type='radio'] + label:hover {
@@ -890,6 +954,13 @@
 		cursor: pointer;
 		display: inline-block;
 		background-color: #343436;
+		-webkit-touch-callout: none; /* iOS Safari */
+		-webkit-user-select: none; /* Safari */
+		-khtml-user-select: none; /* Konqueror HTML */
+		-moz-user-select: none; /* Old versions of Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+		user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 	}
 
 	.toggle input[type='checkbox'] + label:hover {

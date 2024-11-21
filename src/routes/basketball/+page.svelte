@@ -1,21 +1,21 @@
 <script lang="ts">
-	import PaginatedTable from './table.svelte';
-	import Court from './court.svelte';
-
-	import Players from '$lib/assets/mock_players.json';
-	import SeasonAverages from '$lib/assets/averages_season.json';
-	import AlltimeAverages from '$lib/assets/averages_alltime.json';
-	import PositionAverages from '$lib/assets/averages_position.json';
-
-	let data = {
-		players: Players,
-		seasonAverages: SeasonAverages,
-		alltimeAverages: AlltimeAverages,
-		positionAverages: PositionAverages
-	};
 </script>
 
-<div class="flex flex-col gap-8">
-	<PaginatedTable {data} />
-	<Court {data} />
+<svelte:head>
+	<title>NBA Data</title>
+</svelte:head>
+
+<div class="h-full w-full align-middle bg-color">
+	<h1 class="text-3xl">NBA Stats</h1>
 </div>
+
+<style>
+	h1 {
+		color: white;
+		font-family: 'Inter', sans-serif;
+	}
+
+	.bg-color {
+		background-color: #202020;
+	}
+</style>

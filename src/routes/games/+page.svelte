@@ -9,7 +9,7 @@
 	});
 </script>
 
-<div class="container mx-auto flex flex-col justify-center items-center gap-16">
+<div class="w-full mx-auto flex flex-col justify-center items-center gap-16">
 	<div
 		class="flex flex-col justify-center align-middle h-full gap-16"
 		transition:fade={{ duration: 1000 }}

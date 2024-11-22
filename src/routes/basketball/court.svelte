@@ -115,6 +115,8 @@
 	let currentRegion: number = -1;
 	let zoneRegions: [Path2D[], number, number, ShootingZone][];
 
+	let innerScrollY: number = $state(0);
+
 	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
 		toolTipCanvasContext = toolTipCanvas.getContext('2d')!;
@@ -787,7 +789,7 @@
 		let target = event.target;
 		let element = target as HTMLLabelElement;
 		let left = element.getBoundingClientRect().x;
-		let height = element.getBoundingClientRect().y - 40;
+		let height = element.getBoundingClientRect().y - 40 + innerScrollY;
 
 		let tooltipText = document.createElement('p');
 		let newDivElement = document.createElement('div');
@@ -819,6 +821,8 @@
 		}
 	};
 </script>
+
+<svelte:window bind:scrollY={innerScrollY} />
 
 <div class="flex flex-col">
 	<div class="flex flex-row justify-between pb-2">

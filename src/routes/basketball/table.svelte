@@ -10,7 +10,7 @@
 		},
 		{
 			text: 'Team',
-			width: '200'
+			width: '220'
 		},
 		{
 			text: 'GP'
@@ -147,6 +147,7 @@
 <style>
 	table {
 		background-color: #313131;
+		border-right: solid 1px black;
 		table-layout: fixed;
 		min-width: 100%;
 	}
@@ -158,7 +159,9 @@
 	}
 
 	.table-shadow {
-		box-shadow: 2px 2px 2px black;
+		-webkit-box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
+		-moz-box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
+		box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
 	}
 
 	tr {
@@ -167,6 +170,7 @@
 
 	table td {
 		padding: 4px 6px;
+		border-top: solid 1px black;
 	}
 
 	table th {
@@ -183,6 +187,9 @@
 
 	thead {
 		border-bottom: 1px black;
+		-webkit-box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
+		-moz-box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
+		box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
 	}
 
 	.data-table:nth-child(even) {

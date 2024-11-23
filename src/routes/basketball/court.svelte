@@ -829,13 +829,13 @@
 		<div class="filter my-auto">
 			{#each filters as filter, i}
 				<input
-					id={'filter-' + i + 1}
+					id={'court-filter-' + i + 1}
 					type="radio"
 					value={filter.value}
 					bind:group={checkedDataset}
 				/>
 				<label
-					for={'filter-' + i + 1}
+					for={'court-filter-' + i + 1}
 					class="border rounded px-2 py-1"
 					onmouseenter={(e) => {
 						addFilterTooltip(e, i);
@@ -891,9 +891,9 @@
 			<label for="checkbox-1" class="my-auto border rounded px-2 py-1">
 				<span class="text-xl">
 					{#if highlightZones}
-						<Fa icon={faCheck} class="inline-block pr-2" />
+						<Fa icon={faCheck} class="inline-block pr-2 text-lime-500" />
 					{:else}
-						<Fa icon={faX} class="inline-block pr-2" />
+						<Fa icon={faX} class="inline-block pr-2 text-red-600" />
 					{/if}
 				</span><span class="align-text-bottom text-center">Highlight Zones</span>
 			</label>

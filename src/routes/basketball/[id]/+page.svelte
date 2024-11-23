@@ -30,7 +30,7 @@
 	<div class="flex justify-between align-center">
 		<div class="self-end">
 			{#await data.player}
-				<p>Loading..</p>
+				<h2>Loading..</h2>
 			{:then playerData}
 				<h2>{playerData[0].player}</h2>
 			{/await}

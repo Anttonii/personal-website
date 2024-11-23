@@ -1,36 +1,64 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import type { PlayerData } from './types';
+
+	import Fa from 'svelte-fa';
+	import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+
 	let { playerData, teamsData } = $props();
 
 	const tableColumns = [
 		{
-			text: 'ID'
+			text: 'ID',
+			key: 'player_id'
 		},
 		{
-			text: 'Season'
+			text: 'Season',
+			key: 'season'
 		},
 		{
 			text: 'Team',
-			width: '220'
+			width: '220',
+			key: 'tm'
 		},
 		{
-			text: 'GP'
+			text: 'GP',
+			key: 'g'
 		},
 		{
-			text: 'MP'
+			text: 'MP',
+			key: 'mp'
 		},
 		{
-			text: 'PTS'
+			text: 'PTS',
+			key: 'pts'
 		},
 		{
-			text: 'DRB'
+			text: 'DRB',
+			key: 'drb'
 		},
 		{
-			text: 'ORB'
+			text: 'ORB',
+			key: 'orb'
 		},
 		{
-			text: 'AST'
+			text: 'AST',
+			key: 'ast'
 		}
 	];
+	const sortableColumns = new Array('GP', 'MP', 'PTS', 'DRB', 'ORB', 'AST');
+
+	const filters = [
+		{
+			value: 'season',
+			text: 'Season'
+		},
+		{
+			value: 'pg',
+			text: 'Per Game'
+		}
+	];
+
 	const teamNamesMap = new Map<string, string>();
 
 	let innerWidth: number = $state(0);
@@ -42,20 +70,41 @@
 	let namesShortened: boolean = $state(false);
 	let loading: boolean = $state(false);
 
-	$effect(() => {
+	let tableFilter: string = $state('season');
+	let lastTableFilter: string = 'season';
+
+	let sortSelected: [string, boolean] = $state(['', false]);
+
+	let tableData: Array<PlayerData> | undefined = $state();
+
+	onMount(() => {
+		tableData = playerData;
+
 		for (var mapping of teamsData) {
 			teamNamesMap.set(mapping.abbreviation, mapping.teamName);
 			teamNamesMap.set(mapping.teamName, mapping.abbreviation);
 		}
 
+		loading = true;
+
+		window.addEventListener('resize', resize);
+		return {
+			destroy() {
+				window.removeEventListener('resize', resize, true);
+			}
+		};
+	});
+
+	$effect(() => {
 		let temp: string[] = [];
 		for (const season of playerData) {
 			temp.push(namesShortened ? season.tm : teamNamesMap.get(season.tm) || '');
 		}
-		teamNames = temp;
+		teamNames = [...temp];
 
-		window.addEventListener('resize', resize);
-		loading = true;
+		if (lastTableFilter != tableFilter) {
+			changeTableMode();
+		}
 	});
 
 	const resize = () => {
@@ -104,12 +153,95 @@
 			}
 		}
 	};
+
+	const changeTableMode = () => {
+		switch (tableFilter) {
+			case 'season':
+				tableData = [...playerData];
+				break;
+			case 'pg':
+				if (!tableData) {
+					return;
+				}
+
+				for (var i = 0; i < tableData.length; i++) {
+					tableData[i].mp = Number((playerData[i].mp / playerData[i].g).toFixed(1));
+					tableData[i].pts = Number((playerData[i].pts / playerData[i].g).toFixed(1));
+					tableData[i].drb = Number((playerData[i].drb / playerData[i].g).toFixed(1));
+					tableData[i].orb = Number((playerData[i].orb / playerData[i].g).toFixed(1));
+					tableData[i].ast = Number((playerData[i].ast / playerData[i].g).toFixed(1));
+				}
+				break;
+		}
+
+		lastTableFilter = tableFilter;
+	};
+
+	const onSort = (ascending: boolean, key: string) => {
+		if (sortSelected[0] == key && sortSelected[1] == ascending) {
+			sortSelected = ['', false];
+		} else {
+			sortSelected = [key, ascending];
+		}
+
+		sortTable();
+	};
+
+	const sortTable = () => {
+		let sortedKey = sortSelected[0];
+		let ascending = sortSelected[1];
+
+		if (sortedKey == '') {
+			sortedKey = 'season';
+			ascending = true;
+		}
+
+		if (!tableData) {
+			return;
+		}
+
+		const arrayVal = tableData[0];
+		const keys = Object.keys(arrayVal) as Array<keyof typeof arrayVal>;
+
+		let sorted = [...$state.snapshot(tableData)];
+		sorted.sort((a, b) => {
+			let returnValue = 1;
+
+			keys.forEach((key) => {
+				if (key == sortedKey) {
+					const aValue: any = a[key];
+					const bValue: any = b[key];
+
+					if (typeof aValue === 'number' && typeof bValue === 'number') {
+						if (ascending) {
+							returnValue = aValue > bValue ? 1 : -1;
+						} else {
+							returnValue = aValue < bValue ? 1 : -1;
+						}
+					}
+				}
+			});
+			return returnValue;
+		});
+		tableData = [...sorted];
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class="table-container">
-	{#if loading}
+<div class="flex flex-col table-container gap-2">
+	<div class="flex flex-row filter gap-1">
+		{#each filters as filter, i}
+			<input
+				id={'table-filter-' + i + 1}
+				type="radio"
+				value={filter.value}
+				bind:group={tableFilter}
+			/>
+			<label for={'table-filter-' + i + 1} class="border rounded px-2 py-1">{filter.text}</label>
+		{/each}
+	</div>
+	{#if loading && tableData}
 		<table class="border-collapse table-shadow">
 			<thead>
 				<tr>
@@ -120,16 +252,31 @@
 							onmouseleave={(e) => toggleHighlight(e, i, false)}
 							style={column.width ? 'width: ' + column.width + 'px;' : ''}
 						>
-							{column.text}
+							{#if !sortableColumns.includes(column.text)}
+								<span>{column.text}</span>
+							{:else}
+								<div class="flex flex-row justify-between">
+									<span class="self-center">{column.text}</span>
+
+									<div class="flex flex-col">
+										<button onclick={() => onSort(false, column.key)}>
+											<span class="sort-up"><Fa icon={faSortUp} translateY={0.3} /></span>
+										</button>
+										<button onclick={() => onSort(true, column.key)}>
+											<span class="sort-down"><Fa icon={faSortDown} translateY={-0.3} /></span>
+										</button>
+									</div>
+								</div>
+							{/if}
 						</th>
 					{/each}
 				</tr>
 			</thead>
 			<tbody>
-				{#each playerData as player, i}
+				{#each tableData as player, i}
 					<tr class="data-table">
 						<td class="">{player.player_id}</td>
-						<td class="">{getSeason(player.season)}</td>
+						<td class="">{getSeason(player.season!)}</td>
 						<td class="">{teamNames[i]}</td>
 						<td class="text-right">{player.g}</td>
 						<td class="text-right">{player.mp}</td>
@@ -150,6 +297,11 @@
 		border-right: solid 1px black;
 		table-layout: fixed;
 		min-width: 100%;
+	}
+
+	label {
+		font-family: 'Inter', sans-serif;
+		color: white;
 	}
 
 	.table-container {
@@ -202,6 +354,31 @@
 
 	.data-table:hover {
 		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	.filter input[type='radio']:checked + label {
+		border-bottom: 3px solid white;
+	}
+
+	.filter input[type='radio'] + label {
+		cursor: pointer;
+		display: inline-block;
+		background-color: #343436;
+		-webkit-touch-callout: none; /* iOS Safari */
+		-webkit-user-select: none; /* Safari */
+		-khtml-user-select: none; /* Konqueror HTML */
+		-moz-user-select: none; /* Old versions of Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+		user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+	}
+
+	.filter input[type='radio'] + label:hover {
+		background-color: #707070;
+	}
+
+	.filter input[type='radio'] {
+		display: none;
 	}
 
 	:global(.highlight) {

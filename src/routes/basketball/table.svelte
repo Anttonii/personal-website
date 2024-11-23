@@ -74,6 +74,7 @@
 	let lastTableFilter: string = 'season';
 
 	let sortSelected: [string, boolean] = $state(['', false]);
+	let currentlySorted: HTMLElement | undefined;
 
 	let tableData: Array<PlayerData> | undefined = $state();
 
@@ -177,11 +178,23 @@
 		lastTableFilter = tableFilter;
 	};
 
-	const onSort = (ascending: boolean, key: string) => {
+	const onSort = (event: MouseEvent, ascending: boolean, key: string) => {
+		let target = event.target as HTMLButtonElement;
+
+		if (currentlySorted) {
+			currentlySorted.classList.remove('text-lime-500');
+		}
+
 		if (sortSelected[0] == key && sortSelected[1] == ascending) {
 			sortSelected = ['', false];
+			currentlySorted = undefined;
 		} else {
 			sortSelected = [key, ascending];
+			currentlySorted = target;
+		}
+
+		if (currentlySorted) {
+			currentlySorted.classList.add('text-lime-500');
 		}
 
 		sortTable();
@@ -259,11 +272,11 @@
 									<span class="self-center">{column.text}</span>
 
 									<div class="flex flex-col">
-										<button onclick={() => onSort(false, column.key)}>
-											<span class="sort-up"><Fa icon={faSortUp} translateY={0.3} /></span>
+										<button onclick={(e) => onSort(e, false, column.key)}>
+											<span class="sort-up"><Fa icon={faSortUp} translateY={0.35} /></span>
 										</button>
-										<button onclick={() => onSort(true, column.key)}>
-											<span class="sort-down"><Fa icon={faSortDown} translateY={-0.3} /></span>
+										<button onclick={(e) => onSort(e, true, column.key)}>
+											<span class="sort-down"><Fa icon={faSortDown} translateY={-0.35} /></span>
 										</button>
 									</div>
 								</div>

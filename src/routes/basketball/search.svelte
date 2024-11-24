@@ -190,6 +190,26 @@
 </div>
 
 <style>
+	@media (min-device-width: 320px) and (max-device-width: 680px) {
+		#search-field > input {
+			padding: 0;
+			width: 100%;
+			background: transparent;
+			color: white;
+			font-family: 'Inter', sans-serif;
+		}
+	}
+
+	@media (min-device-width: 680px) {
+		#search-field > input {
+			width: 100%;
+			padding-left: 14px;
+			background: transparent;
+			color: white;
+			font-family: 'Inter', sans-serif;
+		}
+	}
+
 	.hidden {
 		display: none;
 	}
@@ -203,14 +223,6 @@
 		z-index: 100;
 		max-width: 100%;
 		min-width: 250px;
-	}
-
-	#search-field > input {
-		width: 100%;
-		padding-left: 14px;
-		background: transparent;
-		color: white;
-		font-family: 'Inter', sans-serif;
 	}
 
 	#search-field > input::placeholder {

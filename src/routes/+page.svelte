@@ -73,9 +73,9 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <div class="w-full h-full flex">
-	<div class="w-full mx-auto flex flex-col justify-center items-center">
+	<div class="w-full mx-auto flex flex-col justify-center items-center py-4">
 		<div
-			class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white"
+			class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white px-6"
 			id="main-transition"
 		>
 			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
@@ -147,6 +147,20 @@
 								<div class="divider"></div>
 								<div class="content">
 									<h2 class="pb-3">
+										<a href="/basketball" class="link-text"
+											>NBA Stats<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										An interactivate NBA player data aggregate that gives you visual insight into
+										how well individual players shoot the ball.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
 										<a href="/neural" class="link-text">
 											Neural Network<span class="text-md inline-flex align-baseline pl-2">
 												<Fa icon={faUpRightFromSquare} />
@@ -158,6 +172,7 @@
 										the grid.
 									</p>
 								</div>
+
 								<div class="divider"></div>
 								<div class="content">
 									<h2 class="pb-3">
@@ -192,19 +207,6 @@
 									<p class="text-sm tracking-tight">
 										An implementation of a popular Japanese arcade game written in C++ using SDL2
 										and Box2D.
-									</p>
-								</div>
-								<div class="divider"></div>
-								<div class="content">
-									<h2 class="pb-3">
-										<a href="/games" class="link-text"
-											>Web Games<span class="text-md inline-flex align-baseline pl-2">
-												<Fa icon={faUpRightFromSquare} />
-											</span>
-										</a>
-									</h2>
-									<p class="text-sm tracking-tight">
-										Small web browser games implemented with three.js and svelte.
 									</p>
 								</div>
 							</div>

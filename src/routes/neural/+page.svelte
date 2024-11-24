@@ -181,7 +181,7 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<div class="w-full h-full flex">
+<div class="w-full h-full flex py-4">
 	<div class="w-full mx-auto flex flex-col justify-center items-center">
 		<div class="flex flex-col justify-start md:justify-center align-middle gap-8 h-full text-white">
 			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">

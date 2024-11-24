@@ -16,6 +16,12 @@
 	const onSearch = (playerId: number) => {
 		goto('/basketball/' + playerId);
 	};
+
+	// A hacky way to set the body background color to something else than what is defined
+	// in app.css.
+	function setBackground(node: HTMLBodyElement) {
+		node.style.backgroundColor = '#202020';
+	}
 </script>
 
 <svelte:head>
@@ -26,13 +32,15 @@
 	{/await}
 </svelte:head>
 
+<svelte:body use:setBackground />
+
 <nav class="flex pb-4 pt-4 w-full justify-center">
-	<div class="flex justify-between align-center">
-		<div class="self-end">
+	<div class="flex flex-col md:flex-row md:justify-between">
+		<div class="min-w-fit self-end mx-auto mb-4 md:mx-0 md:mb-0">
 			{#await data.player}
-				<h2>Loading..</h2>
+				<h2 class="text-xl md:text-2xl">Loading..</h2>
 			{:then playerData}
-				<h2>{playerData[0].player}</h2>
+				<h2 class="text-xl md:text-2xl">{playerData[0].player}</h2>
 			{/await}
 		</div>
 		<div class="self-center">
@@ -64,10 +72,41 @@
 </footer>
 
 <style>
+	@media (min-device-width: 320px) and (max-device-width: 680px) {
+		nav {
+			max-width: 100%;
+			padding-left: 8px;
+			padding-right: 8px;
+			z-index: 20;
+		}
+
+		nav > div {
+			max-width: 100%;
+			min-width: 100%;
+		}
+
+		.container {
+			max-width: 100%;
+			margin: 70px 0px 0px 0px;
+		}
+	}
+
+	@media (min-device-width: 680px) {
+		nav > div {
+			max-width: 1100px;
+			width: 100%;
+		}
+
+		.container {
+			max-width: 900px;
+			width: 100%;
+			margin: 70px 0px 0px 0px;
+		}
+	}
+
 	h2 {
 		color: white;
 		font-family: 'Inter', sans-serif;
-		font-size: 24px;
 	}
 
 	nav {
@@ -84,12 +123,6 @@
 	nav > div {
 		max-width: 1100px;
 		width: 100%;
-	}
-
-	.container {
-		max-width: 900px;
-		width: 100%;
-		margin: 70px 0px 0px 0px;
 	}
 
 	.page {

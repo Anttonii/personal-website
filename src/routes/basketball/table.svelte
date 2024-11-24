@@ -81,11 +81,17 @@
 	onMount(() => {
 		tableData = playerData;
 
+		mobileScreen = innerWidth <= 680;
+		if (mobileScreen) {
+			namesShortened = true;
+		}
+
 		for (var mapping of teamsData) {
 			teamNamesMap.set(mapping.abbreviation, mapping.teamName);
 			teamNamesMap.set(mapping.teamName, mapping.abbreviation);
 		}
 
+		toggleShortNames();
 		loading = true;
 
 		window.addEventListener('resize', resize);
@@ -97,11 +103,7 @@
 	});
 
 	$effect(() => {
-		let temp: string[] = [];
-		for (const season of playerData) {
-			temp.push(namesShortened ? season.tm : teamNamesMap.get(season.tm) || '');
-		}
-		teamNames = [...temp];
+		toggleShortNames();
 
 		if (lastTableFilter != tableFilter) {
 			changeTableMode();
@@ -109,7 +111,7 @@
 	});
 
 	const resize = () => {
-		mobileScreen = innerWidth <= 640;
+		mobileScreen = innerWidth <= 680;
 
 		if (mobileScreen && !namesShortened) {
 			teamNames = teamNames.map((elem) => teamNamesMap.get(elem) || '');
@@ -126,7 +128,19 @@
 		return (season - 1).toString() + '/' + season.toString();
 	};
 
+	const toggleShortNames = () => {
+		let temp: string[] = [];
+		for (const season of playerData) {
+			temp.push(namesShortened ? season.tm : teamNamesMap.get(season.tm) || '');
+		}
+		teamNames = [...temp];
+	};
+
 	const toggleHighlight = (event: MouseEvent, index: number, toggle: boolean) => {
+		if (mobileScreen) {
+			return;
+		}
+
 		let elems: HTMLElement[] = [];
 
 		let target = event.target as HTMLTableElement;
@@ -305,6 +319,34 @@
 </div>
 
 <style>
+	@media (min-device-width: 320px) and (max-device-width: 680px) {
+		.table-container {
+			max-width: 100vh;
+			overflow-x: auto;
+			padding-left: 4px;
+			padding-right: 4px;
+		}
+
+		table {
+			background-color: #313131;
+			border-right: solid 1px black;
+			table-layout: fixed;
+			margin-top: 50px;
+		}
+
+		th {
+			min-width: 70px;
+		}
+
+		.filter {
+			position: absolute;
+		}
+
+		th:nth-child(-n + 3) {
+			text-align: center;
+		}
+	}
+
 	table {
 		background-color: #313131;
 		border-right: solid 1px black;

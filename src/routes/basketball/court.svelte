@@ -115,12 +115,17 @@
 	let currentRegion: number = -1;
 	let zoneRegions: [Path2D[], number, number, ShootingZone][];
 
+	let mobileScreen: boolean = $state(false);
 	let innerScrollY: number = $state(0);
+	let innerWidth: number = $state(0);
+	let innerHeight: number = $state(0);
 
 	onMount(() => {
 		canvasContext = canvas.getContext('2d')!;
 		toolTipCanvasContext = toolTipCanvas.getContext('2d')!;
 		outlineCanvasContext = outlineCanvas.getContext('2d')!;
+
+		mobileScreen = innerWidth <= 680;
 
 		getAllSeasons();
 		getColors();
@@ -130,6 +135,13 @@
 		setupShootingZones();
 
 		loaded = true;
+
+		window.addEventListener('resize', resize);
+		return {
+			destroy() {
+				window.removeEventListener('resize', resize, true);
+			}
+		};
 	});
 
 	$effect(() => {
@@ -137,6 +149,10 @@
 		updateShootingZones();
 		requestAnimationFrame(drawShootingZones);
 	});
+
+	const resize = () => {
+		mobileScreen = innerWidth <= 680;
+	};
 
 	const createRegions = () => {
 		freeThrowRegion = new Path2D();
@@ -614,14 +630,33 @@
 	}
 
 	const handleMouse = (event: MouseEvent) => {
-		const mouseX = event.clientX - canvas.getBoundingClientRect().x;
-		const mouseY = event.clientY - canvas.getBoundingClientRect().y;
+		if (mobileScreen) {
+			return;
+		}
 
+		const posX = event.clientX - canvas.getBoundingClientRect().x;
+		const posY = event.clientY - canvas.getBoundingClientRect().y;
+
+		onTouch(posX, posY);
+	};
+
+	const handleTouch = (event: TouchEvent) => {
+		if (!mobileScreen) {
+			return;
+		}
+
+		const posX = (event.touches[0].clientX - canvas.getBoundingClientRect().x) * 1.85;
+		const posY = (event.touches[0].clientY - canvas.getBoundingClientRect().y) * 1.85;
+
+		onTouch(posX, posY);
+	};
+
+	const onTouch = (posX: number, posY: number) => {
 		let foundRegion: number = -1;
 
 		for (let i = 0; i < zoneRegions.length; i++) {
 			for (var region of zoneRegions[i][0]) {
-				if (canvasContext.isPointInPath(region, mouseX, mouseY)) {
+				if (canvasContext.isPointInPath(region, posX, posY)) {
 					foundRegion = i;
 				}
 			}
@@ -653,7 +688,7 @@
 			}
 		}
 
-		drawTooltip(mouseX, mouseY);
+		drawTooltip(posX, posY);
 	};
 
 	const handleMouseEnter = () => {
@@ -786,6 +821,10 @@
 	};
 
 	const addFilterTooltip = (event: MouseEvent, index: number) => {
+		if (mobileScreen) {
+			return;
+		}
+
 		let target = event.target;
 		let element = target as HTMLLabelElement;
 		let left = element.getBoundingClientRect().x;
@@ -822,34 +861,40 @@
 	};
 </script>
 
-<svelte:window bind:scrollY={innerScrollY} />
+<svelte:window bind:scrollY={innerScrollY} bind:innerWidth bind:innerHeight />
 
 <div class="flex flex-col">
-	<div class="flex flex-row justify-between pb-2">
-		<div class="filter my-auto">
+	<div class="flex flex-row justify-between pb-2 px-2 md:px-0 gap-2 md:gap-0">
+		<div class="flex flex-row flex-wrap gap-2 filter md:my-auto">
 			{#each filters as filter, i}
-				<input
-					id={'court-filter-' + i + 1}
-					type="radio"
-					value={filter.value}
-					bind:group={checkedDataset}
-				/>
-				<label
-					for={'court-filter-' + i + 1}
-					class="border rounded px-2 py-1"
-					onmouseenter={(e) => {
-						addFilterTooltip(e, i);
-					}}
-					onmouseleave={(e) => {
-						removeFilterTooltip(e);
-					}}>{filter.text}</label
-				>
+				<div class="z-0">
+					<input
+						id={'court-filter-' + i + 1}
+						type="radio"
+						value={filter.value}
+						bind:group={checkedDataset}
+					/>
+					<label
+						for={'court-filter-' + i + 1}
+						class="border rounded px-2 py-1 z-10"
+						onmouseenter={(e) => {
+							addFilterTooltip(e, i);
+						}}
+						onmouseleave={(e) => {
+							removeFilterTooltip(e);
+						}}>{filter.text}</label
+					>
+				</div>
 			{/each}
 		</div>
 		{#if loaded}
 			<div class="flex flex-row gap-2 dropbox border rounded pl-2">
 				<label for="seasons" class="text-md my-auto">Season:</label>
-				<select id="seasons" class="py-2 px-2 pe-2 text-sm" bind:value={selectedSeason}>
+				<select
+					id="seasons"
+					class="md:py-2 px-1 md:px-2 md:pe-2 text-md"
+					bind:value={selectedSeason}
+				>
 					{#each seasons as season}
 						<option value={season}>{season}</option>
 					{/each}
@@ -858,7 +903,7 @@
 		{/if}
 	</div>
 
-	<div class="relative" style="width: {courtWidth}; height: {courtHeight};">
+	<div class="relative md:mx-0 mx-auto" style="width: {courtWidth}; height: {courtHeight};">
 		<canvas bind:this={canvas} width={courtWidth} height={courtHeight} class="z-0"> </canvas>
 		<canvas
 			bind:this={outlineCanvas}
@@ -869,8 +914,9 @@
 		</canvas>
 		<canvas
 			onmouseenter={(_) => handleMouseEnter()}
-			onmousemove={(e) => handleMouse(e)}
+			onmousemove={handleMouse}
 			onmouseleave={(_) => handleMouseExit()}
+			ontouchstart={handleTouch}
 			bind:this={toolTipCanvas}
 			width={courtWidth}
 			height={courtHeight}
@@ -878,7 +924,7 @@
 		>
 		</canvas>
 	</div>
-	<div class="pt-2">
+	<div class="pt-2 px-2 md:px-0">
 		<div class="flex flex-row toggle justify-between">
 			<input
 				id="checkbox-1"
@@ -906,7 +952,7 @@
 				}}
 			/>
 			<label for="checkbox-2" class="my-auto border rounded px-2 py-1">
-				<span class="text-2xl text-center align-middle">
+				<span class="text-2xl text-center">
 					<Fa icon={faInfoCircle} />
 				</span>
 			</label>
@@ -915,9 +961,20 @@
 </div>
 
 <style>
+	@media (min-device-width: 320px) and (max-device-width: 680px) {
+		canvas {
+			border: solid 1px white;
+			width: 360px;
+			height: 346px;
+		}
+
+		.dropbox {
+			height: 35px;
+		}
+	}
+
 	canvas {
-		border: solid 1px;
-		border-color: white;
+		border: solid 1px white;
 	}
 
 	label {

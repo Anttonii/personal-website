@@ -1,0 +1,182 @@
+[
+    {
+        "abbreviation": "ATL",
+        "teamName": "Atlanta Hawks",
+        "primaryColor": "#E03A3E",
+        "secondaryColor": "#C1D32F"
+    },
+    {
+        "abbreviation": "BOS",
+        "teamName": "Boston Celtics",
+        "primaryColor": "#007A33",
+        "secondaryColor": "#BA9653"
+    },
+    {
+        "abbreviation": "BRK",
+        "teamName": "Brooklyn Nets",
+        "primaryColor": "#000000",
+        "secondaryColor": "#FFFFFF"
+    },
+    {
+        "abbreviation": "CHA",
+        "teamName": "Charlotte Hornets",
+        "primaryColor": "#1D1160",
+        "secondaryColor": "#00788C"
+    },
+    {
+        "abbreviation": "CHI",
+        "teamName": "Chicago Bulls",
+        "primaryColor": "#000000",
+        "secondaryColor": "#CE1141"
+    },
+    {
+        "abbreviation": "CLE",
+        "teamName": "Cleveland Cavaliers",
+        "primaryColor": "#860038",
+        "secondaryColor": "#041E42"
+    },
+    {
+        "abbreviation": "DAL",
+        "teamName": "Dallas Mavericks",
+        "primaryColor": "#00538C",
+        "secondaryColor": "#B8C4CA"
+    },
+    {
+        "abbreviation": "DEN",
+        "teamName": "Denver Nuggets",
+        "primaryColor": "#0E2240",
+        "secondaryColor": "#FEC524"
+    },
+    {
+        "abbreviation": "DET",
+        "teamName": "Detroit Pistons",
+        "primaryColor": "#C8102E",
+        "secondaryColor": "#1D42BA"
+    },
+    {
+        "abbreviation": "GSW",
+        "teamName": "Golden State Warriors",
+        "primaryColor": "#1D428A",
+        "secondaryColor": "#FFC72C"
+    },
+    {
+        "abbreviation": "HOU",
+        "teamName": "Houston Rockets",
+        "primaryColor": "#000000",
+        "secondaryColor": "#CE1141"
+    },
+    {
+        "abbreviation": "IND",
+        "teamName": "Indiana Pacers",
+        "primaryColor": "#002D62",
+        "secondaryColor": "#FDBB30"
+    },
+    {
+        "abbreviation": "LAC",
+        "teamName": "Los Angeles Clippers",
+        "primaryColor": "#C8102E",
+        "secondaryColor": "#1D428A"
+    },
+    {
+        "abbreviation": "LAL",
+        "teamName": "Los Angeles Lakers",
+        "primaryColor": "#552583",
+        "secondaryColor": "#FDB927"
+    },
+    {
+        "abbreviation": "MEM",
+        "teamName": "Memphis Grizzlies",
+        "primaryColor": "#5D76A9",
+        "secondaryColor": "#12173F"
+    },
+    {
+        "abbreviation": "MIA",
+        "teamName": "Miami Heat",
+        "primaryColor": "#98002E",
+        "secondaryColor": "#F9A01B"
+    },
+    {
+        "abbreviation": "MIL",
+        "teamName": "Milwaukee Bucks",
+        "primaryColor": "#00471B",
+        "secondaryColor": "#EEE1C6"
+    },
+    {
+        "abbreviation": "MIN",
+        "teamName": "Minnesota Timberwolves",
+        "primaryColor": "#0C2340",
+        "secondaryColor": "#236192"
+    },
+    {
+        "abbreviation": "NOP",
+        "teamName": "New Orleans Pelicans",
+        "primaryColor": "#0C2340",
+        "secondaryColor": "#85714D"
+    },
+    {
+        "abbreviation": "NYK",
+        "teamName": "New York Knicks",
+        "primaryColor": "#006BB6",
+        "secondaryColor": "#F58426"
+    },
+    {
+        "abbreviation": "OKC",
+        "teamName": "Oklahoma City Thunder",
+        "primaryColor": "#007AC1",
+        "secondaryColor": "#EF3B24"
+    },
+    {
+        "abbreviation": "ORL",
+        "teamName": "Orlando Magic",
+        "primaryColor": "#0077C0",
+        "secondaryColor": "#C4CED4"
+    },
+    {
+        "abbreviation": "PHI",
+        "teamName": "Philadelphia 76ers",
+        "primaryColor": "#006BB6",
+        "secondaryColor": "#ED174C"
+    },
+    {
+        "abbreviation": "PHO",
+        "teamName": "Phoenix Suns",
+        "primaryColor": "#1D1160",
+        "secondaryColor": "#E56020"
+    },
+    {
+        "abbreviation": "POR",
+        "teamName": "Portland Trail Blazers",
+        "primaryColor": "#E03A3E",
+        "secondaryColor": "#000000"
+    },
+    {
+        "abbreviation": "SAC",
+        "teamName": "Sacramento Kings",
+        "primaryColor": "#5A2D81",
+        "secondaryColor": "#63727A"
+    },
+    {
+        "abbreviation": "SAS",
+        "teamName": "San Antonio Spurs",
+        "primaryColor": "#000000",
+        "secondaryColor": "#C4CED4"
+    },
+    {
+        "abbreviation": "TOR",
+        "teamName": "Toronto Raptors",
+        "primaryColor": "#000000",
+        "secondaryColor": "#CE1141"
+    },
+    {
+        "abbreviation": "UTA",
+        "teamName": "Utah Jazz",
+        "primaryColor": "#000000",
+        "secondaryColor": "#FFFFFF"
+    },
+    {
+        "abbreviation": "WAS",
+        "teamName": "Washington Wizards",
+        "primaryColor": "#002B5C",
+        "secondaryColor": "#E31837"
+    }
+]

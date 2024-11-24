@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
+	import Fa from 'svelte-fa';
+	import { faHouse } from '@fortawesome/free-solid-svg-icons';
+
 	import Table from '../table.svelte';
 	import Court from '../court.svelte';
 	import Search from '../search.svelte';
@@ -36,7 +39,10 @@
 
 <nav class="flex pb-4 pt-4 w-full justify-center">
 	<div class="flex flex-col md:flex-row md:justify-between">
-		<div class="min-w-fit self-end mx-auto mb-4 md:mx-0 md:mb-0">
+		<div class="flex flex-row min-w-fit self-end mx-auto mb-4 md:mx-0 md:mb-0">
+			<a href="/basketball/" class="self-center text-2xl text-white pr-5 pb-1">
+				<Fa icon={faHouse} />
+			</a>
 			{#await data.player}
 				<h2 class="text-xl md:text-2xl">Loading..</h2>
 			{:then playerData}

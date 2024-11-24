@@ -37,7 +37,7 @@
 		},
 		{
 			name: 'Luka Doncic',
-			player_id: 4775,
+			player_id: 4653,
 			team: 'Dallas Mavericks',
 			position: 'Point Guard',
 			player_number: 77

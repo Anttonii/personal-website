@@ -75,26 +75,37 @@
 <div class="w-full h-full flex">
 	<div class="w-full mx-auto flex flex-col justify-center items-center py-4">
 		<div
-			class="flex flex-col justify-start md:justify-center align-middle h-full gap-16 text-white px-6"
+			class="flex flex-col justify-start md:justify-center h-full text-white px-6"
 			id="main-transition"
 		>
 			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
-			<nav>
+			<div class="flex flex-row justify-between px-5 py-4">
+				<a
+					download="AnttoniKoivuResume.pdf"
+					target="_blank"
+					href={Resume}
+					class="md:text-xl text-md top-link"
+					>Resume<span class="inline-flex pl-2">
+						<Fa icon={faUpRightFromSquare} />
+					</span>
+				</a>
+				<a
+					download="AnttoniKoivuResume.pdf"
+					target="_blank"
+					href="https://github.com/Anttonii"
+					class="md:text-xl text-md top-link"
+					>Github<span class="inline-flex pl-2">
+						<Fa icon={faUpRightFromSquare} />
+					</span>
+				</a>
+			</div>
+			<nav class="py-16">
 				<ul bind:this={list} class="flex flex-col gap-4 justify-center">
-					<li class="justify-start underline centering md:mx-auto flex text-xl">
-						<button on:mouseenter={() => moveTriangle(0)} class="pb-4"
-							><a download="AnttoniKoivuResume.pdf" target="_blank" href={Resume}
-								>Resume<span class="text-md inline-flex pl-2">
-									<Fa icon={faUpRightFromSquare} />
-								</span>
-							</a></button
-						>
-					</li>
 					<li class="justify-start underline centering md:mx-auto flex text-xl">
 						<span bind:this={triangle} class="triangle"></span>
 						<span bind:this={outerTriangle} class="outertriangle"></span>
 
-						<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(0)}
+						<button on:mouseenter={() => moveTriangle(0)} on:click={() => onButtonClick(0)}
 							>About Me</button
 						>
 					</li>
@@ -117,7 +128,7 @@
 						{/if}
 					</div>
 					<li class="justify-start underline centering md:mx-auto flex text-xl">
-						<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(1)}
+						<button on:mouseenter={() => moveTriangle(1)} on:click={() => onButtonClick(1)}
 							>Projects</button
 						>
 					</li>
@@ -213,7 +224,7 @@
 						{/if}
 					</div>
 					<li class="justify-start underline centering md:mx-auto flex text-xl">
-						<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(2)}
+						<button on:mouseenter={() => moveTriangle(2)} on:click={() => onButtonClick(2)}
 							>Education</button
 						>
 					</li>
@@ -259,7 +270,7 @@
 						{/if}
 					</div>
 					<li class="justify-start underline centering md:mx-auto flex text-xl">
-						<button on:mouseenter={() => moveTriangle(4)} on:click={() => onButtonClick(3)} class=""
+						<button on:mouseenter={() => moveTriangle(3)} on:click={() => onButtonClick(3)} class=""
 							>Contact</button
 						>
 					</li>
@@ -406,9 +417,24 @@
 		padding: 0.75rem 0px 0.75rem 0px;
 		transition: all 0.2s ease-out;
 	}
+
 	.contact-icon:hover {
 		background-color: gray;
 		transition: all 0.2s ease-in;
+	}
+
+	div > a {
+		font-family: 'Press Start 2P', sans-serif;
+	}
+
+	a.top-link:hover {
+		color: red;
+	}
+
+	a.top-link > span {
+		font-size: medium;
+		vertical-align: text-bottom;
+		padding-bottom: 3px;
 	}
 
 	.link-text:hover {

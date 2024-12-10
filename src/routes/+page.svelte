@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Resume from '$lib/assets/Resume.pdf';
+	import Resume from '$lib/assets/AnttoniKoivuResume.pdf';
 
 	import Fa from 'svelte-fa';
 	import { faLinkedin, faGithub, faDiscord, faTelegram } from '@fortawesome/free-brands-svg-icons';

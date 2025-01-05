@@ -99,7 +99,7 @@
 					</span>
 				</a>
 			</div>
-			<nav class="py-16">
+			<nav class="py-12">
 				<ul bind:this={list} class="flex flex-col gap-4 justify-center">
 					<li class="justify-start underline centering md:mx-auto flex text-xl">
 						<span bind:this={triangle} class="triangle"></span>
@@ -122,8 +122,23 @@
 									related and am currently studying Machine Learning and Data Science.
 									<br />
 									<br />
-									I am also passionate about basketball, weightlifting and video games.
+									Outside of programming, I am also passionate about basketball, weightlifting and video
+									games.
+									<br />
+									<br />
+									I've also taken a keen interest in competitive programming, you can view my profiles
+									here:
 								</p>
+								<div class="flex flex-row justify-center gap-4 pb-2">
+									<div class="align-left mx-12">
+										<a href="https://leetcode.com/u/Anttoni/" target="_blank"><h2>Leetcode</h2></a>
+									</div>
+									<div class="align-right mx-12">
+										<a href="https://codeforces.com/profile/Anttonii" target="_blank"
+											><h2>Codeforces</h2></a
+										>
+									</div>
+								</div>
 							</div>
 						{/if}
 					</div>
@@ -158,6 +173,37 @@
 								<div class="divider"></div>
 								<div class="content">
 									<h2 class="pb-3">
+										<a href="https://github.com/Anttonii/jaydee" class="link-text" target="_blank">
+											Jaydee<span class="text-md inline-flex align-baseline pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										Scrape and crawl internet with the use of a .json schema. Built to scrape data
+										for machine learning related projects.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
+										<a
+											href="https://github.com/Anttonii/hullifier"
+											class="link-text"
+											target="_blank"
+											>Hullifier<span class="text-md inline-flex pl-2">
+												<Fa icon={faUpRightFromSquare} />
+											</span>
+										</a>
+									</h2>
+									<p class="text-sm tracking-tight">
+										Visualizes convex hull solving algorithms in 2D. Currently working on extending
+										functionality to 3D.
+									</p>
+								</div>
+								<div class="divider"></div>
+								<div class="content">
+									<h2 class="pb-3">
 										<a href="/basketball" class="link-text"
 											>NBA Stats<span class="text-md inline-flex align-baseline pl-2">
 												<Fa icon={faUpRightFromSquare} />
@@ -181,43 +227,6 @@
 									<p class="text-sm tracking-tight">
 										A neural network built on the backend that guesses which number is drawn onto
 										the grid.
-									</p>
-								</div>
-
-								<div class="divider"></div>
-								<div class="content">
-									<h2 class="pb-3">
-										<a
-											href="https://github.com/Anttonii/barbell-tracking"
-											class="link-text"
-											target="_blank"
-										>
-											Barbell Tracking<span class="text-md inline-flex align-baseline pl-2">
-												<Fa icon={faUpRightFromSquare} />
-											</span>
-										</a>
-									</h2>
-									<p class="text-sm tracking-tight">
-										Tracks movement of barbell from a video file and produces plots of data such as
-										bar speed and deviation from y-axis. Designed to track the movement pattern in
-										movements like squat, bench press and deadlift. Currently work-in-progress.
-									</p>
-								</div>
-								<div class="divider"></div>
-								<div class="content">
-									<h2 class="pb-3">
-										<a
-											href="https://github.com/Anttonii/suikagame"
-											class="link-text"
-											target="_blank"
-											>Suikagame<span class="text-md inline-flex pl-2">
-												<Fa icon={faUpRightFromSquare} />
-											</span>
-										</a>
-									</h2>
-									<p class="text-sm tracking-tight">
-										An implementation of a popular Japanese arcade game written in C++ using SDL2
-										and Box2D.
 									</p>
 								</div>
 							</div>
@@ -419,7 +428,7 @@
 	}
 
 	.contact-icon:hover {
-		background-color: gray;
+		background-color: rgb(109, 109, 109);
 		transition: all 0.2s ease-in;
 	}
 
@@ -427,7 +436,7 @@
 		font-family: 'Press Start 2P', sans-serif;
 	}
 
-	a.top-link:hover {
+	div > a:hover {
 		color: red;
 	}
 

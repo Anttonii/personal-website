@@ -79,7 +79,7 @@
 			id="main-transition"
 		>
 			<h2 class="font-bold text-3xl md:text-5xl text-center tracking-wider">Anttoni Koivu</h2>
-			<div class="flex flex-row justify-between px-5 py-4">
+			<div class="flex flex-row justify-between px-5 py-4" id="header">
 				<a
 					download="AnttoniKoivuResume.pdf"
 					target="_blank"
@@ -423,7 +423,7 @@
 		transition: all 0.2s ease-in;
 	}
 
-	div > a {
+	div#header > a {
 		font-family: 'Press Start 2P', sans-serif;
 	}
 

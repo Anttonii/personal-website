@@ -129,11 +129,11 @@
 									I've also taken a keen interest in competitive programming, you can view my profiles
 									here:
 								</p>
-								<div class="flex flex-row justify-center gap-4 pb-2">
-									<div class="align-left mx-12">
+								<div class="flex md:flex-row justify-center gap-4 pb-2">
+									<div class="align-left md:mx-12">
 										<a href="https://leetcode.com/u/Anttoni/" target="_blank"><h2>Leetcode</h2></a>
 									</div>
-									<div class="align-right mx-12">
+									<div class="align-right md:mx-12">
 										<a href="https://codeforces.com/profile/Anttonii" target="_blank"
 											><h2>Codeforces</h2></a
 										>
